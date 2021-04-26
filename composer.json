@@ -1,17 +1,17 @@
 {
-    "name": "vendor_slug/package_slug",
-    "description": ":package_description",
+    "name": "spatie/laravel-elasticsearch-query-builder",
+    "description": "Build eElasticsearch queries based of a query string",
     "keywords": [
-        ":vendor_name",
+        "spatie",
         "laravel",
-        "package_slug"
+        "laravel-elasticsearch-query-builder"
     ],
-    "homepage": "https://github.com/vendor_slug/package_slug",
+    "homepage": "https://github.com/spatie/laravel-elasticsearch-query-builder",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Alex Vanderbist",
+            "email": "alex.vanderbist@gmail.com",
             "role": "Developer"
         }
     ],
@@ -30,13 +30,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Spatie\\ElasticSearchQueryBuilder\\": "src",
+            "Spatie\\ElasticSearchQueryBuilder\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Spatie\\ElasticSearchQueryBuilder\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -50,10 +50,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Spatie\\ElasticSearchQueryBuilder\\ElasticSearchQueryBuilderServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\SkeletonFacade"
+                "ElasticSearchQueryBuilder": "Spatie\\ElasticSearchQueryBuilder\\ElasticSearchQueryBuilderFacade"
             }
         }
     },

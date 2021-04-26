@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace Spatie\ElasticSearchQueryBuilder\Tests;
 
 class ExampleTest extends TestCase
 {

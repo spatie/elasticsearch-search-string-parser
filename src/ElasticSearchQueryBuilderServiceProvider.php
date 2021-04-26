@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace Spatie\ElasticSearchQueryBuilder;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VendorName\Skeleton\Commands\SkeletonCommand;
+use Spatie\ElasticSearchQueryBuilder\Commands\ElasticSearchQueryBuilderCommand;
 
-class SkeletonServiceProvider extends PackageServiceProvider
+class ElasticSearchQueryBuilderServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -16,10 +16,10 @@ class SkeletonServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('skeleton')
+            ->name('laravel-elasticsearch-query-builder')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_skeleton_table')
-            ->hasCommand(SkeletonCommand::class);
+            ->hasMigration('create_laravel-elasticsearch-query-builder_table')
+            ->hasCommand(ElasticSearchQueryBuilderCommand::class);
     }
 }
