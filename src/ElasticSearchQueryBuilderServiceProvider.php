@@ -2,9 +2,9 @@
 
 namespace Spatie\ElasticSearchQueryBuilder;
 
+use Spatie\ElasticSearchQueryBuilder\Commands\ElasticSearchQueryBuilderCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Spatie\ElasticSearchQueryBuilder\Commands\ElasticSearchQueryBuilderCommand;
 
 class ElasticSearchQueryBuilderServiceProvider extends PackageServiceProvider
 {
