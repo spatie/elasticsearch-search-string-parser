@@ -2,7 +2,6 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Builder;
 
-use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
 

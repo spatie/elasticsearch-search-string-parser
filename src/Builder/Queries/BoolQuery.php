@@ -30,7 +30,7 @@ class BoolQuery implements Query
                 'filter' => array_map(fn (Query $query) => $query->toArray(), $this->filter),
                 'should' => array_map(fn (Query $query) => $query->toArray(), $this->should),
                 'must_not' => array_map(fn (Query $query) => $query->toArray(), $this->mustNot),
-            ]
+            ],
         ];
     }
 }
