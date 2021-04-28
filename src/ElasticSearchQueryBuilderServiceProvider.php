@@ -16,10 +16,7 @@ class ElasticSearchQueryBuilderServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-elasticsearch-query-builder')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-elasticsearch-query-builder_table')
-            ->hasCommand(ElasticSearchQueryBuilderCommand::class);
+            ->name('elasticsearch-query-builder')
+            ->hasConfigFile();
     }
 }
