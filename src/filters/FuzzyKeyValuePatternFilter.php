@@ -3,7 +3,6 @@
 namespace Spatie\ElasticSearchQueryBuilder\Filters;
 
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MatchQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
 
 class FuzzyKeyValuePatternFilter implements PatternFilter

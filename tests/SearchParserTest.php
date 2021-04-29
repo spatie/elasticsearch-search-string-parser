@@ -32,7 +32,7 @@ class SearchParserTest extends TestCase
                             'fields' => [
                                 'company_name',
                             ],
-                            'fuzziness' => 2
+                            'fuzziness' => 2,
                         ],
                     ],
                     [

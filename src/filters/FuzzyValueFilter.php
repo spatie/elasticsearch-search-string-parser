@@ -21,7 +21,6 @@ class FuzzyValueFilter implements ValueFilter
         return new static($fields);
     }
 
-
     public function apply(Builder $builder, string $value)
     {
         $query = new MultiMatchQuery($value, $this->fields);
