@@ -7,7 +7,7 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
 
 class Builder
 {
-    private ?BoolQuery $query;
+    private ?BoolQuery $query = null;
 
     public function addQuery(Query $query, string $boolType = 'must'): static
     {
@@ -18,5 +18,16 @@ class Builder
         $this->query->add($query, $boolType);
 
         return $this;
+    }
+
+    public function getPayload(): array
+    {
+        $payload = [];
+
+        if ($this->query) {
+            $payload['query'] = $this->query->toArray();
+        }
+
+        return $payload;
     }
 }

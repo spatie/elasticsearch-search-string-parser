@@ -24,13 +24,15 @@ class BoolQuery implements Query
     #[ArrayShape(['bool' => "array"])]
     public function toArray(): array
     {
+        $bool = [
+            'must' => array_map(fn (Query $query) => $query->toArray(), $this->must),
+            'filter' => array_map(fn (Query $query) => $query->toArray(), $this->filter),
+            'should' => array_map(fn (Query $query) => $query->toArray(), $this->should),
+            'must_not' => array_map(fn (Query $query) => $query->toArray(), $this->mustNot),
+        ];
+
         return [
-            'bool' => [
-                'must' => array_map(fn (Query $query) => $query->toArray(), $this->must),
-                'filter' => array_map(fn (Query $query) => $query->toArray(), $this->filter),
-                'should' => array_map(fn (Query $query) => $query->toArray(), $this->should),
-                'must_not' => array_map(fn (Query $query) => $query->toArray(), $this->mustNot),
-            ],
+            'bool' => array_filter($bool),
         ];
     }
 }

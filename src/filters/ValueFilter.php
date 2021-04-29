@@ -4,9 +4,7 @@ namespace Spatie\ElasticSearchQueryBuilder\Filters;
 
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 
-interface Filter
+interface ValueFilter
 {
-    public function pattern(): string;
-
-    public function apply(Builder $builder);
+    public function apply(Builder $builder, string $value);
 }

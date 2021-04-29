@@ -3,6 +3,7 @@
 namespace Spatie\ElasticSearchQueryBuilder\Tests;
 
 use Elasticsearch\ClientBuilder;
+use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyFieldsValueFilter;
 use Spatie\ElasticSearchQueryBuilder\SearchQuery;
 
 class SearchParserTest extends TestCase
@@ -13,17 +14,24 @@ class SearchParserTest extends TestCase
         $client = ClientBuilder::create()->build();
 
         $payload = SearchQuery::forClient($client)
-            ->fields(['title', 'description'])
+            ->defaultFilter(new FuzzyFieldsValueFilter(['title', 'description']))
             ->query('deadly neurotoxin')
             ->getBuilder()
             ->getPayload();
 
         $this->assertEquals([
-            'multi_match' => [
-                'query' => 'deadly neurotoxin',
-                'fields' => [
-                    'title',
-                    'description',
+            'bool' => [
+                'must' => [
+                    [
+                        'multi_match' => [
+                            'query' => 'deadly neurotoxin',
+                            'fields' => [
+                                'title',
+                                'description',
+                            ],
+                            'fuzziness' => 2
+                        ],
+                    ],
                 ],
             ],
         ], $payload['query']);
