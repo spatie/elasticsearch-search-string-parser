@@ -62,7 +62,7 @@ class SearchQuery
                 return preg_filter($filter->pattern(), '', $query);
             }, $query);
 
-        if($this->baseFilter) {
+        if ($this->baseFilter) {
             $this->baseFilter->apply($this->builder, $queryWithoutFilters);
         }
 

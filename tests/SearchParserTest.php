@@ -29,7 +29,7 @@ class SearchParserTest extends TestCase
                                 'title',
                                 'description',
                             ],
-                            'fuzziness' => 2
+                            'fuzziness' => 2,
                         ],
                     ],
                 ],
