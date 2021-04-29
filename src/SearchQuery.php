@@ -51,9 +51,9 @@ class SearchQuery
     {
         $queryWithoutFilters = collect($this->filters)
             ->reduce(function (string $query, PatternFilter $filter) {
-                $matches = preg_match_all($filter->pattern(), $query, $filters, PREG_SET_ORDER);
+                $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
 
-                if (! $matches) {
+                if (! $matchCount) {
                     return $query;
                 }
 
@@ -61,6 +61,8 @@ class SearchQuery
 
                 return preg_filter($filter->pattern(), '', $query);
             }, $query);
+
+        $queryWithoutFilters = trim($queryWithoutFilters);
 
         if ($this->baseFilter) {
             $this->baseFilter->apply($this->builder, $queryWithoutFilters);
