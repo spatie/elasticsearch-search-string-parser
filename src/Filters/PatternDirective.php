@@ -6,7 +6,7 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 
 abstract class PatternDirective
 {
-    abstract public function apply(Builder $builder, string $pattern, array $values = []): static;
+    abstract public function apply(Builder $builder, string $pattern, array $values = []): void;
 
     abstract public function pattern(): string;
 

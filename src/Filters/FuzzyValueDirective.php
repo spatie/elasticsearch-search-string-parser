@@ -21,7 +21,7 @@ class FuzzyValueDirective extends Directive
         return new static($fields);
     }
 
-    public function apply(Builder $builder, string $value)
+    public function apply(Builder $builder, string $value): void
     {
         $query = new MultiMatchQuery($value, $this->fields);
 

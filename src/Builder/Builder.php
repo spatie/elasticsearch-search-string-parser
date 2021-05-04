@@ -11,7 +11,7 @@ class Builder
 {
     protected ?BoolQuery $query = null;
 
-    protected ?AggregationCollection $aggregations;
+    protected ?AggregationCollection $aggregations = null;
 
     public function addQuery(Query $query, string $boolType = 'must'): static
     {
@@ -41,6 +41,10 @@ class Builder
 
         if ($this->query) {
             $payload['query'] = $this->query->toArray();
+        }
+
+        if ($this->aggregations) {
+            $payload['aggs'] = $this->aggregations->toArray();
         }
 
         return $payload;

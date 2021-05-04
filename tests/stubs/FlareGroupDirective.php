@@ -16,7 +16,9 @@ class FlareGroupDirective extends GroupDirective
 
     public function canApply(string $pattern, array $values = []): bool
     {
-        return in_array($values['value'], ['class', 'message', 'url']);
+        $field = $this->getFieldForValue($values['value']);
+
+        return $field !== null;
     }
 
     public function pattern(): string
@@ -24,15 +26,13 @@ class FlareGroupDirective extends GroupDirective
         return '/group:(?<value>.*?)(?:$|\s)/i';
     }
 
-    public function apply(Builder $builder, string $pattern, array $values = []): static
+    public function apply(Builder $builder, string $pattern, array $values = []): void
     {
         $field = $this->getFieldForValue($values['value']);
 
         $groupAggregation = new TermsAggregation($field, "{$field}.keyword");
 
         $builder->addAggregation($groupAggregation);
-
-        return $this;
     }
 
     public function transformToHits(array $results): array

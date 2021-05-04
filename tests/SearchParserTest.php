@@ -7,48 +7,28 @@ use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyValueDirective;
 use Spatie\ElasticSearchQueryBuilder\SearchQuery;
 use Spatie\ElasticSearchQueryBuilder\Tests\stubs\FlareGroupDirective;
+use Spatie\Snapshots\MatchesSnapshots;
 
 class SearchParserTest extends TestCase
 {
+    use MatchesSnapshots;
+
     /** @test */
     public function it_can_create_a_search_payload_from_a_basic_text_query_with_key_value_pattern_filter()
     {
         $client = ClientBuilder::create()->build();
 
-        $payload = SearchQuery::forClient($client)
+        $searchQuery = SearchQuery::make($client)
             ->baseDirective(new FuzzyValueDirective(['title', 'description']))
-            ->filters(
+            ->directives(
                 new FuzzyKeyValuePatternDirective('company', ['company_name']),
                 new FlareGroupDirective()
-            )
-            ->query('deadly neurotoxin company:aperture group:user.id @user #group group:user.id')
-            ->getBuilder()
-            ->getPayload();
+            );
 
-        $this->assertEquals([
-            'bool' => [
-                'must' => [
-                    [
-                        'multi_match' => [
-                            'query' => 'aperture',
-                            'fields' => [
-                                'company_name',
-                            ],
-                            'fuzziness' => 2,
-                        ],
-                    ],
-                    [
-                        'multi_match' => [
-                            'query' => 'deadly neurotoxin',
-                            'fields' => [
-                                'title',
-                                'description',
-                            ],
-                            'fuzziness' => 2,
-                        ],
-                    ],
-                ],
-            ],
-        ], $payload['query']);
+        $searchQuery->search('deadly neurotoxin company:aperture group:url');
+
+        $payload = $searchQuery->getBuilder()->getPayload();
+
+        $this->assertMatchesJsonSnapshot($payload);
     }
 }

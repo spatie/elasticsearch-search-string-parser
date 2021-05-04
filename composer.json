@@ -2,7 +2,7 @@
     "name": "spatie/elasticsearch-query-builder",
     "description": "Build Elasticsearch queries based of a query string",
     "keywords": [
-        "spatie",
+        "spatie"
     ],
     "homepage": "https://github.com/spatie/laravel-elasticsearch-query-builder",
     "license": "MIT",
@@ -16,16 +16,19 @@
     "require": {
         "php": "^8.0",
         "elasticsearch/elasticsearch": "^7.12",
+        "illuminate/collections": "^8.40"
     },
     "require-dev": {
         "brianium/paratest": "^6.2",
         "jetbrains/phpstorm-attributes": "^1.0",
+        "larapack/dd": "^1.1",
         "phpunit/phpunit": "^9.3",
+        "spatie/phpunit-snapshot-assertions": "^4.2",
         "vimeo/psalm": "^4.4"
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\ElasticSearchQueryBuilder\\": "src",
+            "Spatie\\ElasticSearchQueryBuilder\\": "src"
         }
     },
     "autoload-dev": {

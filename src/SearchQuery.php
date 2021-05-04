@@ -18,12 +18,28 @@ class SearchQuery
 
     protected Client $client;
 
+    protected ?string $searchIndex = null;
+
     public function __construct(
         Client $client,
         ?Builder $builder = null
     ) {
         $this->client = $client;
         $this->builder = $builder ?? new Builder();
+    }
+
+    public static function make(
+        Client $client,
+        ?Builder $builder = null
+    ): static {
+        return new static($client, $builder);
+    }
+
+    public function setElasticsearchIndex(string $searchIndex): static
+    {
+        $this->searchIndex = $searchIndex;
+
+        return $this;
     }
 
     /**
@@ -42,7 +58,7 @@ class SearchQuery
         return $this;
     }
 
-    public function patternDirectives(PatternDirective ...$patternDirectives): static
+    public function directives(PatternDirective ...$patternDirectives): static
     {
         $this->patternDirectives = $patternDirectives;
 
@@ -55,7 +71,15 @@ class SearchQuery
 
         $payload = $this->builder->getPayload();
 
-        $results = $this->client->get($payload);
+        $params = [
+            'body' => $payload,
+        ];
+
+        if ($this->searchIndex) {
+            $params['index'] = $this->searchIndex;
+        }
+
+        $results = $this->client->search($params);
 
         return new ResultsCollection($results);
     }
@@ -76,7 +100,7 @@ class SearchQuery
                 }
 
                 collect($matches)
-                    ->filter(fn (array $match) => $filter->canApply(array_shift($match), $match))
+                    ->filter(fn(array $match) => $filter->canApply(array_shift($match), $match))
                     ->each(fn(array $match) => $filter->apply($this->builder, array_shift($match), $match));
 
                 return preg_filter($filter->pattern(), '', $query);

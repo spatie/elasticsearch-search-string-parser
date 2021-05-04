@@ -1,0 +1,34 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "multi_match": {
+                        "query": "aperture",
+                        "fields": [
+                            "company_name"
+                        ],
+                        "fuzziness": 2
+                    }
+                },
+                {
+                    "multi_match": {
+                        "query": "deadly neurotoxin",
+                        "fields": [
+                            "title",
+                            "description"
+                        ],
+                        "fuzziness": 2
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "seen_at_url": {
+            "terms": {
+                "field": "seen_at_url.keyword"
+            }
+        }
+    }
+}

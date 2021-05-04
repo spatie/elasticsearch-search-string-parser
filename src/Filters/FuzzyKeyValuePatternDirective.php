@@ -21,7 +21,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         return new static($key, $fields);
     }
 
-    public function apply(Builder $builder, string $pattern, array $values = [])
+    public function apply(Builder $builder, string $pattern, array $values = []): void
     {
         $query = new MultiMatchQuery($values['value'], $this->fields);
 
