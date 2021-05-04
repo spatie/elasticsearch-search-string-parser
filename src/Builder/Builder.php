@@ -20,6 +20,13 @@ class Builder
         return $this;
     }
 
+    public function addAggregate(Aggregate $aggregate): static
+    {
+
+
+        return $this;
+    }
+
     public function getPayload(): array
     {
         $payload = [];
