@@ -14,6 +14,8 @@ class FlareGroupDirective extends GroupDirective
         'seen_at_url' => ['seen_at_url', 'url'],
     ];
 
+    const GROUPING_AGGREGATION = '_grouping';
+
     public function canApply(string $pattern, array $values = []): bool
     {
         $field = $this->getFieldForValue($values['value']);
@@ -30,14 +32,14 @@ class FlareGroupDirective extends GroupDirective
     {
         $field = $this->getFieldForValue($values['value']);
 
-        $groupAggregation = new TermsAggregation($field, "{$field}.keyword");
+        $groupAggregation = new TermsAggregation(self::GROUPING_AGGREGATION, "{$field}.keyword");
 
         $builder->addAggregation($groupAggregation);
     }
 
     public function transformToHits(array $results): array
     {
-        return [];
+        return $results['aggregations'][self::GROUPING_AGGREGATION]['buckets'];
     }
 
     protected function getFieldForValue($value): ?string

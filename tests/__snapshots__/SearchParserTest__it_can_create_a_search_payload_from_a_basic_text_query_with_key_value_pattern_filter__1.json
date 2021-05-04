@@ -25,7 +25,7 @@
         }
     },
     "aggs": {
-        "seen_at_url": {
+        "_grouping": {
             "terms": {
                 "field": "seen_at_url.keyword"
             }

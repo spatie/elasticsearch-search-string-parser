@@ -5,6 +5,7 @@ namespace Spatie\ElasticSearchQueryBuilder;
 use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Filters\Directive;
+use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective;
 
 class SearchQuery
@@ -19,6 +20,8 @@ class SearchQuery
     protected Client $client;
 
     protected ?string $searchIndex = null;
+
+    protected ?GroupDirective $groupDirective  = null;
 
     public function __construct(
         Client $client,
@@ -81,12 +84,13 @@ class SearchQuery
 
         $results = $this->client->search($params);
 
-        if ($groupDirective = $this->getGroupDirective()) {
-            $hits = $results['aggregations']['???']['buckets'];
+        if ($this->groupDirective) {
+            $hits = $this->groupDirective->transformToHits($results);
         } else {
             $hits = $results['hits']['hits'];
         }
 
+        return new SearchResults();
     }
 
     public function getBuilder(): Builder
@@ -97,18 +101,28 @@ class SearchQuery
     protected function applyQuery(string $query): void
     {
         $queryWithoutDirectives = collect($this->patternDirectives)
-            ->reduce(function (string $query, PatternDirective $filter) {
-                $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
+            ->reduce(function (string $query, PatternDirective $directive) {
+                $matchCount = preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER);
 
                 if (!$matchCount) {
                     return $query;
                 }
 
                 collect($matches)
-                    ->filter(fn(array $match) => $filter->canApply(array_shift($match), $match))
-                    ->each(fn(array $match) => $filter->apply($this->builder, array_shift($match), $match));
+                    ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
+                    ->each(function (array $match) use ($directive) {
+                        if ($directive instanceof GroupDirective) {
+                            if ($this->groupDirective) {
+                                return;
+                            } else {
+                                $this->groupDirective = $directive;
+                            }
+                        }
 
-                return preg_filter($filter->pattern(), '', $query);
+                        $directive->apply($this->builder, array_shift($match), $match);
+                    });
+
+                return preg_filter($directive->pattern(), '', $query);
             }, $query);
 
         $queryWithoutDirectives = trim($queryWithoutDirectives);

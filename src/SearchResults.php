@@ -5,9 +5,7 @@ namespace Spatie\ElasticSearchQueryBuilder;
 class SearchResults
 {
     public function __construct(
-        public array $raw,
-        public array $hits,
-        public array $directives = []
+
     ) {
     }
 
