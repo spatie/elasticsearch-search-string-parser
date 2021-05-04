@@ -10,7 +10,7 @@ use Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective;
 class SearchQuery
 {
     /** @var \Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective[] */
-    protected array $directives = [];
+    protected array $patternDirectives = [];
 
     protected ?Directive $baseDirective = null;
 
@@ -42,9 +42,9 @@ class SearchQuery
         return $this;
     }
 
-    public function directives(PatternDirective ...$filters): static
+    public function patternDirectives(PatternDirective ...$patternDirectives): static
     {
-        $this->directives = $filters;
+        $this->patternDirectives = $patternDirectives;
 
         return $this;
     }
@@ -67,7 +67,9 @@ class SearchQuery
 
     protected function applyQuery(string $query): void
     {
-        $queryWithoutDirectives = collect($this->directives)
+        $queryWithoutDirectives = collect($this->patternDirectives)
+            ->filter(function (Directive $directive) {
+            })
             ->reduce(function (string $query, PatternDirective $filter) {
                 $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
 

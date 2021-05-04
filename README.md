@@ -11,7 +11,6 @@
 - transform resultaten op basis van group dir
 - aggregations toevoegen aan builder
 - sorts in builder
-- searchbuilder extends els builder?
 - options per directive support
 
 

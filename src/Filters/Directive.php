@@ -8,7 +8,7 @@ abstract class Directive
 {
     abstract public function apply(Builder $builder, string $value);
 
-    public function shouldApply(): bool
+    public function canApply(string $value): bool
     {
         return true;
     }
