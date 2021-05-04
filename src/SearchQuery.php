@@ -65,7 +65,7 @@ class SearchQuery
         return $this;
     }
 
-    public function search(string $query): ResultsCollection
+    public function search(string $query): SearchResults
     {
         $this->applyQuery($query);
 
@@ -81,7 +81,12 @@ class SearchQuery
 
         $results = $this->client->search($params);
 
-        return new ResultsCollection($results);
+        if ($groupDirective = $this->getGroupDirective()) {
+            $hits = $results['aggregations']['???']['buckets'];
+        } else {
+            $hits = $results['hits']['hits'];
+        }
+
     }
 
     public function getBuilder(): Builder
