@@ -50,7 +50,7 @@ class SearchQuery
 
     public function query(string $query): static
     {
-        $queryWithoutFilters = collect($this->directives)
+        $queryWithoutDirectives = collect($this->directives)
             ->reduce(function (string $query, PatternDirective $filter) {
                 $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
 
@@ -63,10 +63,10 @@ class SearchQuery
                 return preg_filter($filter->pattern(), '', $query);
             }, $query);
 
-        $queryWithoutFilters = trim($queryWithoutFilters);
+        $queryWithoutDirectives = trim($queryWithoutDirectives);
 
         if ($this->baseDirective) {
-            $this->baseDirective->apply($this->builder, $queryWithoutFilters);
+            $this->baseDirective->apply($this->builder, $queryWithoutDirectives);
         }
 
         return $this;
