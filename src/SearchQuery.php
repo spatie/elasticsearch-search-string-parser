@@ -14,15 +14,16 @@ class SearchQuery
 
     protected ?Directive $baseDirective = null;
 
-    public function __construct(protected Builder $builder)
-    {
-    }
+    protected Builder $builder;
 
-    public static function forClient(Client $client): static
-    {
-        $builder = new Builder();
+    protected Client $client;
 
-        return new static($builder);
+    public function __construct(
+        Client $client,
+        ?Builder $builder = null
+    ) {
+        $this->client = $client;
+        $this->builder = $builder ?? new Builder();
     }
 
     /**
@@ -48,17 +49,34 @@ class SearchQuery
         return $this;
     }
 
-    public function query(string $query): static
+    public function search(string $query): ResultsCollection
+    {
+        $this->applyQuery($query);
+
+        $payload = $this->builder->getPayload();
+
+        $results = $this->client->get($payload);
+
+        return new ResultsCollection($results);
+    }
+
+    public function getBuilder(): Builder
+    {
+        return $this->builder;
+    }
+
+    protected function applyQuery(string $query): void
     {
         $queryWithoutDirectives = collect($this->directives)
             ->reduce(function (string $query, PatternDirective $filter) {
                 $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
 
-                if (! $matchCount) {
+                if (!$matchCount) {
                     return $query;
                 }
 
-                collect($matches)->each(fn (array $match) => $filter->apply($this->builder, array_shift($match), $match));
+                collect($matches)
+                    ->each(fn(array $match) => $filter->apply($this->builder, array_shift($match), $match));
 
                 return preg_filter($filter->pattern(), '', $query);
             }, $query);
@@ -68,17 +86,5 @@ class SearchQuery
         if ($this->baseDirective) {
             $this->baseDirective->apply($this->builder, $queryWithoutDirectives);
         }
-
-        return $this;
-    }
-
-    public function get(): ResultsCollection
-    {
-        return new ResultsCollection();
-    }
-
-    public function getBuilder(): Builder
-    {
-        return $this->builder;
     }
 }
