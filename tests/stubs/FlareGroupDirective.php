@@ -2,6 +2,7 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Tests\stubs;
 
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
 
@@ -27,14 +28,16 @@ class FlareGroupDirective extends GroupDirective
     {
         $field = $this->getFieldForValue($values['value']);
 
-        // apply aggregate for field
+        $groupAggregation = new TermsAggregation($field, "{$field}.keyword");
+
+        $builder->addAggregation($groupAggregation);
 
         return $this;
     }
 
     public function transformToHits(array $results): array
     {
-        // TODO: Implement transformToHits() method.
+        return [];
     }
 
     protected function getFieldForValue($value): ?string

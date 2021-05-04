@@ -68,8 +68,6 @@ class SearchQuery
     protected function applyQuery(string $query): void
     {
         $queryWithoutDirectives = collect($this->patternDirectives)
-            ->filter(function (Directive $directive) {
-            })
             ->reduce(function (string $query, PatternDirective $filter) {
                 $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
 
@@ -78,6 +76,7 @@ class SearchQuery
                 }
 
                 collect($matches)
+                    ->filter(fn (array $match) => $filter->canApply(array_shift($match), $match))
                     ->each(fn(array $match) => $filter->apply($this->builder, array_shift($match), $match));
 
                 return preg_filter($filter->pattern(), '', $query);
@@ -85,7 +84,7 @@ class SearchQuery
 
         $queryWithoutDirectives = trim($queryWithoutDirectives);
 
-        if ($this->baseDirective) {
+        if ($this->baseDirective && $this->baseDirective->canApply($queryWithoutDirectives)) {
             $this->baseDirective->apply($this->builder, $queryWithoutDirectives);
         }
     }

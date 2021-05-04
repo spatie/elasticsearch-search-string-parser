@@ -6,6 +6,7 @@ use Elasticsearch\ClientBuilder;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyValueDirective;
 use Spatie\ElasticSearchQueryBuilder\SearchQuery;
+use Spatie\ElasticSearchQueryBuilder\Tests\stubs\FlareGroupDirective;
 
 class SearchParserTest extends TestCase
 {
@@ -18,9 +19,8 @@ class SearchParserTest extends TestCase
             ->baseDirective(new FuzzyValueDirective(['title', 'description']))
             ->filters(
                 new FuzzyKeyValuePatternDirective('company', ['company_name']),
-                new GroupFilter(), new HashtagGroupFilter(),
+                new FlareGroupDirective()
             )
-            ->grouping(new FlareGrouping)
             ->query('deadly neurotoxin company:aperture group:user.id @user #group group:user.id')
             ->getBuilder()
             ->getPayload();

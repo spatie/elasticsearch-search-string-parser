@@ -2,12 +2,16 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Builder;
 
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Aggregation;
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\AggregationCollection;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
 
 class Builder
 {
-    private ?BoolQuery $query = null;
+    protected ?BoolQuery $query = null;
+
+    protected ?AggregationCollection $aggregations;
 
     public function addQuery(Query $query, string $boolType = 'must'): static
     {
@@ -20,9 +24,13 @@ class Builder
         return $this;
     }
 
-    public function addAggregate(Aggregate $aggregate): static
+    public function addAggregation(Aggregation $aggregation): static
     {
+        if (! $this->aggregations) {
+            $this->aggregations = new AggregationCollection();
+        }
 
+        $this->aggregations->add($aggregation);
 
         return $this;
     }
