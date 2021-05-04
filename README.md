@@ -7,6 +7,46 @@
 
 ---
 
+- altijd maar 1 GroupDirective
+- transform resultaten op basis van group dir
+- aggregations toevoegen aan builder
+- sorts in builder
+- searchbuilder extends els builder?
+- options per directive support
+
+
+```php
+[
+    'raw' => ['raw els response'],
+    'hits' => [],
+    'directives' => [
+        // alle applied directives
+        [
+            'directive' => 'comapny:aperture',
+            'options' => [], // optioneel options uit directive
+        ],
+    ],
+]
+
+
+$a = [
+    'hits' => [
+        [
+            'value' => ['object'],
+            'group' => ['key' => 'Error Class', 'last_seen_at' => '...', '...'], // of null
+        ]
+    ],
+    
+    // tbd
+    'filters' => [
+        'company' => [
+            'options' => [ ... ]
+        ],
+    ],
+]
+```
+
+
 ```php
 SearchBuilder::for($elasticsearch)
     ->filters([

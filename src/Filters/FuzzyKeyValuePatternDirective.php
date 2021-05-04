@@ -5,7 +5,7 @@ namespace Spatie\ElasticSearchQueryBuilder\Filters;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
 
-class FuzzyKeyValuePatternFilter implements PatternFilter
+class FuzzyKeyValuePatternDirective extends PatternDirective
 {
     public function __construct(protected string $key, protected array $fields)
     {

@@ -4,15 +4,15 @@ namespace Spatie\ElasticSearchQueryBuilder;
 
 use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Filters\PatternFilter;
-use Spatie\ElasticSearchQueryBuilder\Filters\ValueFilter;
+use Spatie\ElasticSearchQueryBuilder\Filters\Directive;
+use Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective;
 
 class SearchQuery
 {
-    /** @var \Spatie\ElasticSearchQueryBuilder\Filters\PatternFilter[] */
-    protected array $filters = [];
+    /** @var \Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective[] */
+    protected array $directives = [];
 
-    protected ?ValueFilter $baseFilter = null;
+    protected ?Directive $baseDirective = null;
 
     public function __construct(protected Builder $builder)
     {
@@ -26,31 +26,32 @@ class SearchQuery
     }
 
     /**
-     * This filter will be used to filter the remaining search query after all
-     * pattern filters have been applied.
+     * This directive will be applied to the remainder of the search query
+     * after all other directive have been applied and removed from the
+     * search string.
      *
-     * @param \Spatie\ElasticSearchQueryBuilder\Filters\ValueFilter $filter
+     * @param \Spatie\ElasticSearchQueryBuilder\Filters\Directive $filter
      *
      * @return $this
      */
-    public function defaultFilter(ValueFilter $filter): static
+    public function baseDirective(Directive $filter): static
     {
-        $this->baseFilter = $filter;
+        $this->baseDirective = $filter;
 
         return $this;
     }
 
-    public function patternFilters(PatternFilter ...$filters): static
+    public function directives(PatternDirective ...$filters): static
     {
-        $this->filters = $filters;
+        $this->directives = $filters;
 
         return $this;
     }
 
     public function query(string $query): static
     {
-        $queryWithoutFilters = collect($this->filters)
-            ->reduce(function (string $query, PatternFilter $filter) {
+        $queryWithoutFilters = collect($this->directives)
+            ->reduce(function (string $query, PatternDirective $filter) {
                 $matchCount = preg_match_all($filter->pattern(), $query, $matches, PREG_SET_ORDER);
 
                 if (! $matchCount) {
@@ -64,8 +65,8 @@ class SearchQuery
 
         $queryWithoutFilters = trim($queryWithoutFilters);
 
-        if ($this->baseFilter) {
-            $this->baseFilter->apply($this->builder, $queryWithoutFilters);
+        if ($this->baseDirective) {
+            $this->baseDirective->apply($this->builder, $queryWithoutFilters);
         }
 
         return $this;

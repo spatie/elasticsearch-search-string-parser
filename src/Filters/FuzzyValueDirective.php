@@ -5,7 +5,7 @@ namespace Spatie\ElasticSearchQueryBuilder\Filters;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
 
-class FuzzyValueFilter implements ValueFilter
+class FuzzyValueDirective extends Directive
 {
     public function __construct(protected array $fields)
     {
