@@ -14,4 +14,8 @@ abstract class PatternDirective
     {
         return true;
     }
+
+    public function aggregations() {
+
+    }
 }

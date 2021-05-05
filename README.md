@@ -7,8 +7,6 @@
 
 ---
 
-- altijd maar 1 GroupDirective
-- transform resultaten op basis van group dir
 - aggregations toevoegen aan builder
 - sorts in builder
 - options per directive support

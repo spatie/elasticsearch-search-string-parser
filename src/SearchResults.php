@@ -5,16 +5,8 @@ namespace Spatie\ElasticSearchQueryBuilder;
 class SearchResults
 {
     public function __construct(
-
+        protected array $raw,
+        protected array $hits,
     ) {
-    }
-
-    public static function from(array $results)
-    {
-        $hits = collect($results)->map(function () {
-
-        });
-
-        return new static($results, $hits);
     }
 }

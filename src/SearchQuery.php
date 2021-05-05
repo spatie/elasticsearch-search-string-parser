@@ -90,7 +90,7 @@ class SearchQuery
             $hits = $results['hits']['hits'];
         }
 
-        return new SearchResults();
+        return new SearchResults($results, $hits);
     }
 
     public function getBuilder(): Builder
