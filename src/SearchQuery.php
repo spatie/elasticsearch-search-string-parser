@@ -2,6 +2,7 @@
 
 namespace Spatie\ElasticSearchQueryBuilder;
 
+use Closure;
 use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Filters\Directive;
@@ -23,6 +24,10 @@ class SearchQuery
 
     protected ?GroupDirective $groupDirective  = null;
 
+    protected ?int $size = null;
+
+    private ?Closure $hitTransformer = null;
+
     public function __construct(
         Client $client,
         ?Builder $builder = null
@@ -38,9 +43,16 @@ class SearchQuery
         return new static($client, $builder);
     }
 
-    public function setElasticsearchIndex(string $searchIndex): static
+    public function index(string $searchIndex): static
     {
         $this->searchIndex = $searchIndex;
+
+        return $this;
+    }
+
+    public function size(int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }
@@ -68,6 +80,13 @@ class SearchQuery
         return $this;
     }
 
+    public function hitTransformer(Closure $closure): static
+    {
+        $this->hitTransformer = $closure;
+
+        return $this;
+    }
+
     public function search(string $query): SearchResults
     {
         $this->applyQuery($query);
@@ -82,15 +101,26 @@ class SearchQuery
             $params['index'] = $this->searchIndex;
         }
 
+        if($this->groupDirective){
+            $params['size'] = 0;
+        }
+
+        if($this->size !== null){
+            $params['size'] = $this->size;
+        }
+
         $results = $this->client->search($params);
 
         if ($this->groupDirective) {
             $hits = $this->groupDirective->transformToHits($results);
         } else {
-            $hits = $results['hits']['hits'];
+            $hits = array_map(
+                $this->hitTransformer ?? fn(array $hit) => $hit,
+                $results['hits']['hits']
+            );
         }
 
-        return new SearchResults($results, $hits);
+        return new SearchResults($hits, $results);
     }
 
     public function getBuilder(): Builder

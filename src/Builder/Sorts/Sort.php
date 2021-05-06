@@ -11,6 +11,11 @@ class Sort
 
     private string $order;
 
+    public static function create(string $field, string $order): static
+    {
+        return new self($field, $order);
+    }
+
     public function __construct(string $field, string $order)
     {
         $this->field = $field;

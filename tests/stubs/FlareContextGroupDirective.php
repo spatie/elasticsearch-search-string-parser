@@ -2,25 +2,28 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Tests\stubs;
 
-use ONGR\ElasticsearchDSL\Sort\FieldSort;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\CardinalityAggregation;
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\FilterAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\MaxAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\MinAggregation;
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\NestedAggregation;
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\ReverseNestedAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TopHitsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
+use Spatie\ElasticSearchQueryBuilder\Builder\Queries\TermQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Sorts\Sort;
 use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
 use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrence;
 use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrenceGrouping;
 use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrenceHit;
 
-class FlareGroupDirective extends GroupDirective
+class FlareContextGroupDirective extends GroupDirective
 {
     protected array $allowedValues = [
-        'exception_class' => ['exception_class', 'class'],
-        'exception_message' => ['exception_message', 'message'],
-        'seen_at_url' => ['seen_at_url', 'url'],
+        'user.id' => ['user', 'user.id'],
+        'request.useragent' => ['useragent', 'request.useragent'],
+        'env.laravel_version' => ['laravel_version', 'env.laravel_version'],
+        'env.php_version' => ['php_version', 'env.php_version'],
     ];
 
     const GROUPING_AGGREGATION = '_grouping';
@@ -41,31 +44,34 @@ class FlareGroupDirective extends GroupDirective
     {
         $field = $this->getFieldForValue($values['value']);
 
-        $termsAggregation = TermsAggregation::create(self::GROUPING_AGGREGATION, "{$field}.keyword")
+        $termsAggregation = TermsAggregation::create('terms', 'context_items.value.keyword')
             ->missing(0)
             ->order([
-                'last_received_at' => 'desc',
+                'occurrence>last_received_at' => 'desc',
             ])
-            ->aggregation(MaxAggregation::create('last_received_at', 'received_at'))
-            ->aggregation(MinAggregation::create('first_received_at', 'received_at'))
-            ->aggregation(TopHitsAggregation::create('recent_error_occurrence', 1, Sort::create('received_at', Sort::DESC)));
+            ->aggregation(
+                ReverseNestedAggregation::create('occurrence')
+                    ->aggregation(TopHitsAggregation::create('recent_error_occurrence', 1, Sort::create('received_at', Sort::DESC)))
+                    ->aggregation(MaxAggregation::create('last_received_at', 'received_at'))
+                    ->aggregation(MinAggregation::create('first_received_at', 'received_at'))
+            );
 
-        $countAggregation = CardinalityAggregation::create('distinct_count', "{$field}.keyword")
-            ->missing(0);
+        $filterAggregation = FilterAggregation::create('filter', TermQuery::create('context_items.key', $field))
+            ->aggregation($termsAggregation);
 
-        $builder
-            ->addAggregation($termsAggregation)
-            ->addAggregation($countAggregation);
+        $builder->addAggregation(
+            NestedAggregation::create(self::GROUPING_AGGREGATION, 'context_items')->aggregation($filterAggregation)
+        );
     }
 
     public function transformToHits(array $results): array
     {
         return array_map(
             fn(array $bucket) => new ErrorOccurrenceHit(
-                ErrorOccurrence::fromPayload($bucket['recent_error_occurrence']['hits']['hits'][0]['_source']),
-                ErrorOccurrenceGrouping::fromPayload($bucket),
+                ErrorOccurrence::fromPayload($bucket['occurrence']['recent_error_occurrence']['hits']['hits'][0]['_source']),
+                ErrorOccurrenceGrouping::fromPayload($bucket['occurrence'])
             ),
-            $results['aggregations'][self::GROUPING_AGGREGATION]['buckets']
+            $results['aggregations'][self::GROUPING_AGGREGATION]['filter']['terms']['buckets']
         );
     }
 

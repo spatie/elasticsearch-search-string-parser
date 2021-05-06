@@ -10,6 +10,11 @@ class TopHitsAggregation extends Aggregation
 
     private Sort $sort;
 
+    public static function create(string $name, int $size, Sort $sort): static
+    {
+        return new self($name, $size, $sort);
+    }
+
     public function __construct(
         string $name,
         int $size,

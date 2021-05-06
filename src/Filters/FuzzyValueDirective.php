@@ -23,6 +23,10 @@ class FuzzyValueDirective extends Directive
 
     public function apply(Builder $builder, string $value): void
     {
+        if(empty($value)){
+            return;
+        }
+
         $query = new MultiMatchQuery($value, $this->fields);
 
         $builder->addQuery($query);
