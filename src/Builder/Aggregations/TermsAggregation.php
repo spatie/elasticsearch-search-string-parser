@@ -3,20 +3,21 @@
 namespace Spatie\ElasticSearchQueryBuilder\Builder\Aggregations;
 
 use JetBrains\PhpStorm\ArrayShape;
+use Spatie\ElasticSearchQueryBuilder\Builder\AggregationCollection;
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Concerns\WithAggregations;
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Concerns\WithMissing;
 
 class TermsAggregation extends Aggregation
 {
+    use WithMissing, WithAggregations;
+
     private string $field;
 
     private ?int $size = null;
 
     private ?array $metaData = null;
 
-    private ?string $missing = null;
-
     private ?array $order = null;
-
-    private AggregationCollection $aggregations;
 
     public static function create(string $name, string $field): self
     {
@@ -30,13 +31,6 @@ class TermsAggregation extends Aggregation
         $this->aggregations = new AggregationCollection();
     }
 
-    public function aggregation(Aggregation $aggregation): self
-    {
-        $this->aggregations->add($aggregation);
-
-        return $this;
-    }
-
     public function size(int $size): self
     {
         $this->size = $size;
@@ -47,13 +41,6 @@ class TermsAggregation extends Aggregation
     public function metaData(array $metaData): self
     {
         $this->metaData = $metaData;
-
-        return $this;
-    }
-
-    public function missing(string $missingValue): self
-    {
-        $this->missing = $missingValue;
 
         return $this;
     }

@@ -3,7 +3,6 @@
 namespace Spatie\ElasticSearchQueryBuilder\Builder;
 
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Aggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\AggregationCollection;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
 
