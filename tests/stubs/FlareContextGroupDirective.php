@@ -13,9 +13,7 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\TermQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Sorts\Sort;
 use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
-use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrence;
-use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrenceGrouping;
-use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrenceHit;
+use Spatie\ElasticSearchQueryBuilder\SearchHit;
 
 class FlareContextGroupDirective extends GroupDirective
 {
@@ -67,9 +65,9 @@ class FlareContextGroupDirective extends GroupDirective
     public function transformToHits(array $results): array
     {
         return array_map(
-            fn(array $bucket) => new ErrorOccurrenceHit(
-                ErrorOccurrence::fromPayload($bucket['occurrence']['recent_error_occurrence']['hits']['hits'][0]['_source']),
-                ErrorOccurrenceGrouping::fromPayload($bucket['occurrence'])
+            fn(array $bucket) => new SearchHit(
+                $bucket['occurrence']['recent_error_occurrence']['hits']['hits'][0]['_source'],
+                $bucket['occurrence']
             ),
             $results['aggregations'][self::GROUPING_AGGREGATION]['filter']['terms']['buckets']
         );

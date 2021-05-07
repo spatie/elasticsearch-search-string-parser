@@ -5,6 +5,7 @@ namespace Spatie\ElasticSearchQueryBuilder\Tests;
 use Elasticsearch\ClientBuilder;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyValueDirective;
+use Spatie\ElasticSearchQueryBuilder\SearchHit;
 use Spatie\ElasticSearchQueryBuilder\SearchQuery;
 use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrence;
 use Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data\ErrorOccurrenceHit;
@@ -42,16 +43,16 @@ class SearchParserTest extends TestCase
 
         $searchQuery = SearchQuery::make($client)
             ->index('error_occurrences')
-            ->hitTransformer(fn(array $hit) => new ErrorOccurrenceHit(
-                ErrorOccurrence::fromPayload($hit['_source'])
-            ))
             ->baseDirective(new FuzzyValueDirective(['exception_message', 'exception_class']))
             ->directives(
                 new FuzzyKeyValuePatternDirective('company', ['exception_class']),
                 new FlareGroupDirective()
             );
 
-        dd($searchQuery->search('InvalidArgumentException'));
+        dd(array_map(
+            fn(SearchHit $hit) => ErrorOccurrenceHit::fromSearchHit($hit),
+            $searchQuery->search('InvalidArgumentException')->hits
+        ));
     }
 
 
@@ -69,7 +70,10 @@ class SearchParserTest extends TestCase
                 new FlareGroupDirective()
             );
 
-        dd($searchQuery->search('group:exception_class'));
+        dd(array_map(
+            fn(SearchHit $hit) => ErrorOccurrenceHit::fromSearchHit($hit),
+            $searchQuery->search('group:exception_class')->hits
+        ));
     }
 
     /** @test */
@@ -86,6 +90,29 @@ class SearchParserTest extends TestCase
                 new FlareContextGroupDirective()
             );
 
-        dd($searchQuery->search('group:useragent'));
+        dd(array_map(
+            fn(SearchHit $hit) => ErrorOccurrenceHit::fromSearchHit($hit),
+            $searchQuery->search('group:useragent')->hits
+        ));
+    }
+
+    /** @test */
+    public function it_provides_suggestions()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $searchQuery = SearchQuery::make($client)
+            ->index('error_occurrences')
+            ->size(0)
+            ->baseDirective(new FuzzyValueDirective(['exception_message', 'exception_class']))
+            ->directives(
+                new FuzzyKeyValuePatternDirective('exception', ['exception_class']),
+                new FlareContextGroupDirective()
+            );
+
+        dd(array_map(
+            fn(SearchHit $hit) => ErrorOccurrenceHit::fromSearchHit($hit),
+            $searchQuery->search('exc exception:QueryException')->hits
+        ));
     }
 }

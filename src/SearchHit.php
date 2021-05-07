@@ -2,11 +2,11 @@
 
 namespace Spatie\ElasticSearchQueryBuilder;
 
-class SearchResults
+class SearchHit
 {
     public function __construct(
-        public array $hits,
-        public array $raw,
+        public array $data,
+        public ?array $groupingData = null
     ) {
     }
 }

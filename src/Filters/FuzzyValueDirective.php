@@ -2,6 +2,7 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Filters;
 
+use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
 
@@ -23,12 +24,39 @@ class FuzzyValueDirective extends Directive
 
     public function apply(Builder $builder, string $value): void
     {
-        if(empty($value)){
+        if (empty($value)) {
             return;
         }
 
-        $query = new MultiMatchQuery($value, $this->fields);
+        $builder->addQuery(MultiMatchQuery::create($value, $this->fields));
 
-        $builder->addQuery($query);
+        if ($this->useSuggestions === false) {
+            return;
+        }
+
+        foreach ($this->fields as $field) {
+            $builder->addAggregation(TermsAggregation::create("_{$field}_suggestions", "{$field}.keyword"));
+        }
+    }
+
+    public function transformToSuggestions(array $results): array
+    {
+        if($this->useSuggestions === false){
+            return [];
+        }
+
+        $validAggregations = array_map(
+            fn(string $field) => "_{$field}_suggestions",
+            $this->fields
+        );
+
+        return collect($results['aggregations'])
+            ->filter(fn(array $aggregation, string $name) => in_array($name, $validAggregations))
+            ->flatMap(fn(array $aggregation) => array_map(
+                fn(array $bucket) => $bucket['key'],
+                $aggregation['buckets']
+            ))
+            ->sort()
+            ->toArray();
     }
 }

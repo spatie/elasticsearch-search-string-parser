@@ -2,7 +2,6 @@
 
 namespace Spatie\ElasticSearchQueryBuilder;
 
-use Closure;
 use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Filters\Directive;
@@ -22,11 +21,9 @@ class SearchQuery
 
     protected ?string $searchIndex = null;
 
-    protected ?GroupDirective $groupDirective  = null;
+    protected ?GroupDirective $groupDirective = null;
 
     protected ?int $size = null;
-
-    private ?Closure $hitTransformer = null;
 
     public function __construct(
         Client $client,
@@ -80,16 +77,9 @@ class SearchQuery
         return $this;
     }
 
-    public function hitTransformer(Closure $closure): static
-    {
-        $this->hitTransformer = $closure;
-
-        return $this;
-    }
-
     public function search(string $query): SearchResults
     {
-        $this->applyQuery($query);
+        $appliedDirectives = $this->applyQuery($query);
 
         $payload = $this->builder->getPayload();
 
@@ -101,24 +91,28 @@ class SearchQuery
             $params['index'] = $this->searchIndex;
         }
 
-        if($this->groupDirective){
+        if ($this->groupDirective) {
             $params['size'] = 0;
         }
 
-        if($this->size !== null){
+        if ($this->size !== null) {
             $params['size'] = $this->size;
         }
 
         $results = $this->client->search($params);
 
-        if ($this->groupDirective) {
-            $hits = $this->groupDirective->transformToHits($results);
-        } else {
-            $hits = array_map(
-                $this->hitTransformer ?? fn(array $hit) => $hit,
+        $hits = $this->groupDirective
+            ? $this->groupDirective->transformToHits($results)
+            : array_map(
+                fn(array $hit) => new SearchHit($hit['_source']),
                 $results['hits']['hits']
             );
-        }
+
+        $suggestions = collect($appliedDirectives)
+            ->mapWithKeys(fn(Directive|PatternDirective $directive) => [
+                $directive::class => $directive->transformToSuggestions($results)
+            ])
+            ->dd();
 
         return new SearchResults($hits, $results);
     }
@@ -128,19 +122,21 @@ class SearchQuery
         return $this->builder;
     }
 
-    protected function applyQuery(string $query): void
+    protected function applyQuery(string $query): array
     {
+        $appliedDirectives = [];
+
         $queryWithoutDirectives = collect($this->patternDirectives)
-            ->reduce(function (string $query, PatternDirective $directive) {
+            ->reduce(function (string $query, PatternDirective $directive) use (&$appliedDirectives) {
                 $matchCount = preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER);
 
-                if (!$matchCount) {
+                if (! $matchCount) {
                     return $query;
                 }
 
                 collect($matches)
                     ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
-                    ->each(function (array $match) use ($directive) {
+                    ->each(function (array $match) use (&$appliedDirectives, $directive) {
                         if ($directive instanceof GroupDirective) {
                             if ($this->groupDirective) {
                                 return;
@@ -150,6 +146,8 @@ class SearchQuery
                         }
 
                         $directive->apply($this->builder, array_shift($match), $match);
+
+                        $appliedDirectives[] = $directive;
                     });
 
                 return preg_filter($directive->pattern(), '', $query);
@@ -159,6 +157,10 @@ class SearchQuery
 
         if ($this->baseDirective && $this->baseDirective->canApply($queryWithoutDirectives)) {
             $this->baseDirective->apply($this->builder, $queryWithoutDirectives);
+
+            $appliedDirectives[] = $this->baseDirective;
         }
+
+        return $appliedDirectives;
     }
 }
