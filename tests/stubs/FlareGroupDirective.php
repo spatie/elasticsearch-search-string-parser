@@ -2,7 +2,6 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Tests\stubs;
 
-use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\CardinalityAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\MaxAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\MinAggregation;
