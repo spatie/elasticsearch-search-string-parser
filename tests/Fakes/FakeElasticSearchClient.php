@@ -18,6 +18,8 @@ class FakeElasticSearchClient extends Client
 
     private ?string $indexAssertion = null;
 
+    private ?int $fromAssertion = null;
+
     private array $hits = [];
 
     private array $aggregations = [];
@@ -66,6 +68,14 @@ class FakeElasticSearchClient extends Client
         return $this;
     }
 
+    public function assertFrom(?int $from)
+    {
+        $this->assertions[] = 'from';
+        $this->fromAssertion = $from;
+
+        return $this;
+    }
+
     public function withHits(array ...$hits): self
     {
         $this->hits = $hits;
@@ -92,6 +102,10 @@ class FakeElasticSearchClient extends Client
 
         if(in_array('size', $this->assertions)){
             Assert::assertEquals($this->sizeAssertion, $params['size'] ?? null);
+        }
+
+        if(in_array('from', $this->assertions)){
+            Assert::assertEquals($this->fromAssertion, $params['from'] ?? null);
         }
 
         if(in_array('index', $this->assertions)){

@@ -172,6 +172,17 @@ class SearchQueryTest extends TestCase
     }
 
     /** @test */
+    public function it_can_change_the_from()
+    {
+        $client = FakeElasticSearchClient::make()->assertFrom(200);
+
+        SearchQuery::make($client)
+            ->from(200)
+            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->search('search query');
+    }
+
+    /** @test */
     public function it_can_change_the_index()
     {
         $client = FakeElasticSearchClient::make()->assertIndex('fake-index');

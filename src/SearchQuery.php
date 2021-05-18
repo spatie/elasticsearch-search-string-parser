@@ -26,6 +26,8 @@ class SearchQuery
 
     protected ?int $size = null;
 
+    protected ?int $from = null;
+
     public function __construct(
         Client $client,
         ?Builder $builder = null
@@ -51,6 +53,13 @@ class SearchQuery
     public function size(int $size): static
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function from(int $from): static
+    {
+        $this->from = $from;
 
         return $this;
     }
@@ -92,12 +101,17 @@ class SearchQuery
             $params['index'] = $this->searchIndex;
         }
 
-        if ($this->groupDirective) {
-            $params['size'] = 0;
-        }
-
         if ($this->size !== null) {
             $params['size'] = $this->size;
+        }
+
+        if ($this->from !== null) {
+            $params['from'] = $this->from;
+        }
+
+        if ($this->groupDirective) {
+            $params['size'] = 0;
+            $params['from'] = 0;
         }
 
         $results = $this->client->search($params);
