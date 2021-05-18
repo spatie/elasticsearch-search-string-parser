@@ -4,9 +4,14 @@ namespace Spatie\ElasticSearchQueryBuilder\Builder\Queries;
 
 class NestedQuery implements Query
 {
-    private string $path;
+    protected string $path;
 
-    private Query $query;
+    protected Query $query;
+
+    public static function create(string $path, Query $query): self
+    {
+        return new self($path, $query);
+    }
 
     public function __construct(
         string $path,

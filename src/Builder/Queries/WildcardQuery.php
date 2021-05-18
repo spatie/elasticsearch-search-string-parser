@@ -4,16 +4,15 @@ namespace Spatie\ElasticSearchQueryBuilder\Builder\Queries;
 
 class WildcardQuery implements Query
 {
-    private string $field;
-
-    private string $value;
+    public static function create(string $field, string $value)
+    {
+        return new self($field, $value);
+    }
 
     public function __construct(
-        string $field,
-        string $value
+        protected string $field,
+        protected string $value
     ) {
-        $this->field = $field;
-        $this->value = $value;
     }
 
     public function toArray(): array

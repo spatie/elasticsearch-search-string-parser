@@ -8,7 +8,7 @@ class MinAggregation extends Aggregation
 {
     use WithMissing;
 
-    private string $field;
+    protected string $field;
 
     public static function create(string $name, string $field): self
     {

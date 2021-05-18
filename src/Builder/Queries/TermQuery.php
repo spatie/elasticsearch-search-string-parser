@@ -4,9 +4,9 @@ namespace Spatie\ElasticSearchQueryBuilder\Builder\Queries;
 
 class TermQuery implements Query
 {
-    private string $field;
+    protected string $field;
 
-    private string $value;
+    protected string $value;
 
     public static function create(string $field, string $value): static
     {

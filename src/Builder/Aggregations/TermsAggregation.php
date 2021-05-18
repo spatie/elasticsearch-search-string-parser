@@ -11,13 +11,13 @@ class TermsAggregation extends Aggregation
 {
     use WithMissing, WithAggregations;
 
-    private string $field;
+    protected string $field;
 
-    private ?int $size = null;
+    protected ?int $size = null;
 
-    private ?array $metaData = null;
+    protected ?array $metaData = null;
 
-    private ?array $order = null;
+    protected ?array $order = null;
 
     public static function create(string $name, string $field): self
     {

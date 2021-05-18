@@ -6,7 +6,7 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Aggregation;
 
 class AggregationCollection
 {
-    private array $aggregations;
+    protected array $aggregations;
 
     public function __construct(Aggregation ...$aggregations)
     {

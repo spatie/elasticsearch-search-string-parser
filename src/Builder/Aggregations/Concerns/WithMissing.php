@@ -4,7 +4,7 @@ namespace Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Concerns;
 
 trait WithMissing
 {
-    private ?string $missing = null;
+    protected ?string $missing = null;
 
     public function missing(string $missingValue): self
     {

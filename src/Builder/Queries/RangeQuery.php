@@ -4,20 +4,20 @@ namespace Spatie\ElasticSearchQueryBuilder\Builder\Queries;
 
 class RangeQuery implements Query
 {
-    private null|int|float $gte = null;
+    protected null|int|float $gte = null;
 
-    private null|int|float $lt = null;
+    protected null|int|float $lt = null;
 
-    private null|int|float $lte = null;
+    protected null|int|float $lte = null;
 
-    private null|int|float $gt = null;
+    protected null|int|float $gt = null;
 
     public static function create(string $field): self
     {
         return new self($field);
     }
 
-    public function __construct(private string $field)
+    public function __construct(protected string $field)
     {
     }
 

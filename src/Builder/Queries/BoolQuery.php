@@ -12,13 +12,20 @@ class BoolQuery implements Query
     protected array $should = [];
     protected array $mustNot = [];
 
-    public function add(Query $query, string $type = 'must'): void
+    public static function create(): static
+    {
+        return new self();
+    }
+
+    public function add(Query $query, string $type = 'must'): static
     {
         if (! in_array($type, ['must', 'filter', 'should', 'mustNot'])) {
             throw new BoolQueryTypeDoesNotExist($type);
         }
 
         $this->$type[] = $query;
+
+        return $this;
     }
 
     #[ArrayShape(['bool' => "array"])]

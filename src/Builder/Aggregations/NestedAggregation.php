@@ -9,7 +9,7 @@ class NestedAggregation extends Aggregation
 {
     use WithAggregations;
 
-    private string $path;
+    protected string $path;
 
     public static function create(
         string $name,

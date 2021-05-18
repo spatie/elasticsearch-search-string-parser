@@ -7,7 +7,7 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Aggregation;
 
 trait WithAggregations
 {
-    private AggregationCollection $aggregations;
+    protected AggregationCollection $aggregations;
 
     public function aggregation(Aggregation $aggregation): self
     {

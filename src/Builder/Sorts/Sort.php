@@ -7,9 +7,9 @@ class Sort
     public const ASC = 'asc';
     public const DESC = 'desc';
 
-    private string $field;
+    protected string $field;
 
-    private string $order;
+    protected string $order;
 
     public static function create(string $field, string $order): static
     {

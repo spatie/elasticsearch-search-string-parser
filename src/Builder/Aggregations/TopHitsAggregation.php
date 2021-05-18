@@ -6,9 +6,9 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Sorts\Sort;
 
 class TopHitsAggregation extends Aggregation
 {
-    private int $size;
+    protected int $size;
 
-    private Sort $sort;
+    protected Sort $sort;
 
     public static function create(string $name, int $size, Sort $sort): static
     {

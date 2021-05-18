@@ -10,7 +10,7 @@ class FilterAggregation extends Aggregation
 {
     use WithAggregations;
 
-    private Query $filter;
+    protected Query $filter;
 
     public static function create(
         string $name,
