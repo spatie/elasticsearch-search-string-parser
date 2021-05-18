@@ -32,14 +32,12 @@ class DateKeyValuePatternDirective extends PatternDirective
         }
 
         $value = DateTimeImmutable::createFromFormat('Y-m-d', $values['value']);
-
-        $start = $value->setTime(0, 0);
-        $end = $value->setTime(23, 59, 59);
+        $day = $value->format('Y-m-d');
 
         $builder->addQuery(
             RangeQuery::create($this->field)
-                ->gte($start)
-                ->lte($end)
+                ->gte("{$day}||/d")
+                ->lt("{$day}||+1d/d")
         );
     }
 
