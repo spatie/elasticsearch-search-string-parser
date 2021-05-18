@@ -5,6 +5,7 @@ namespace Spatie\ElasticSearchQueryBuilder;
 use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Filters\Directive;
+use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective;
 
@@ -109,12 +110,18 @@ class SearchQuery
             );
 
         $suggestions = collect($appliedDirectives)
-            ->mapWithKeys(fn(Directive|PatternDirective $directive) => [
-                $directive::class => $directive->transformToSuggestions($results)
-            ])
-            ->dd();
+            ->mapWithKeys(function (Directive|PatternDirective $directive) use ($results) {
+                $name = $directive instanceof FuzzyKeyValuePatternDirective
+                    ? $directive->getKey()
+                    : $directive::class;
 
-        return new SearchResults($hits, $results);
+                $suggestions = $directive->transformToSuggestions($results);
+
+                return [$name => $suggestions];
+            })
+            ->toArray();
+
+        return new SearchResults($hits, $suggestions, $results);
     }
 
     public function getBuilder(): Builder
