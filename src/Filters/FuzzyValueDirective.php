@@ -50,7 +50,7 @@ class FuzzyValueDirective extends Directive
             $this->fields
         );
 
-        return collect($results['aggregations'])
+        return collect($results['aggregations'] ?? [])
             ->filter(fn(array $aggregation, string $name) => in_array($name, $validAggregations))
             ->flatMap(fn(array $aggregation) => array_map(
                 fn(array $bucket) => $bucket['key'],

@@ -5,10 +5,13 @@ namespace Spatie\ElasticSearchQueryBuilder\Tests;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
+use Spatie\ElasticSearchQueryBuilder\Filters\ColumnGroupDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyValueDirective;
+use Spatie\ElasticSearchQueryBuilder\SearchHit;
 use Spatie\ElasticSearchQueryBuilder\SearchQuery;
 use Spatie\ElasticSearchQueryBuilder\Tests\Fakes\FakeElasticSearchClient;
+use Spatie\ElasticSearchQueryBuilder\Tests\Support\PayloadFactory;
 
 class SearchQueryTest extends TestCase
 {
@@ -40,6 +43,24 @@ class SearchQueryTest extends TestCase
     }
 
     /** @test */
+    public function it_can_search_with_multiple_pattern_directive()
+    {
+        $expectedQuery = BoolQuery::create()
+            ->add(MultiMatchQuery::create('hello-world', ['title']))
+            ->add(MultiMatchQuery::create('hello', ['content']));
+
+        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+
+        SearchQuery::make($client)
+            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->directives(
+                FuzzyKeyValuePatternDirective::forField('title', 'title'),
+                FuzzyKeyValuePatternDirective::forField('content', 'content'),
+            )
+            ->search('title:hello-world content:hello');
+    }
+
+    /** @test */
     public function it_can_search_with_a_pattern_directive_with_fallback_to_the_base_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -57,7 +78,7 @@ class SearchQueryTest extends TestCase
     /** @test */
     public function it_will_add_aggregations_for_suggestions()
     {
-        $client = FakeElasticSearchClient::make()->expectAggregations(
+        $client = FakeElasticSearchClient::make()->assertAggregation(
             TermsAggregation::create('_title_suggestions', 'title.keyword'),
             TermsAggregation::create('_content_suggestions', 'content.keyword'),
         );
@@ -66,5 +87,98 @@ class SearchQueryTest extends TestCase
             ->baseDirective(new FuzzyValueDirective(['title', 'content']))
             ->directives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('something');
+    }
+
+    /** @test */
+    public function it_will_transform_hits()
+    {
+        $client = FakeElasticSearchClient::make()->withHits(
+            PayloadFactory::hit('Hello world', 'This is a post'),
+            PayloadFactory::hit('A message from Rick', 'Never gonna give you up'),
+        );
+
+        $results = SearchQuery::make($client)->search('');
+
+        $this->assertCount(2, $results->hits);
+        $this->assertEquals([
+            new SearchHit(['title' => 'Hello world', 'content' => 'This is a post']),
+            new SearchHit(['title' => 'A message from Rick', 'content' => 'Never gonna give you up']),
+        ], $results->hits);
+    }
+
+    /** @test */
+    public function it_will_append_suggestions()
+    {
+        $client = FakeElasticSearchClient::make()->withAggregations(
+            PayloadFactory::bucketAggregation(
+                '_title_suggestions',
+                PayloadFactory::suggestionBucket('Hello world'),
+                PayloadFactory::suggestionBucket('A message from Rick')
+            )
+        );
+
+        $results = SearchQuery::make($client)
+            ->directives(new FuzzyKeyValuePatternDirective('title', ['title']))
+            ->search('title:test');
+
+        $this->assertArrayHasKey('title', $results->suggestions);
+        $this->assertEquals([
+            'Hello world',
+            'A message from Rick',
+        ], $results->suggestions['title']);
+    }
+
+    /** @test */
+    public function it_can_use_a_grouping_directive()
+    {
+        $client = FakeElasticSearchClient::make()
+            ->assertSize(0)
+            ->withAggregations(
+                PayloadFactory::bucketAggregation(
+                    '_grouping',
+                    PayloadFactory::groupingBucket(['title' => 'Hello world', 'content' => 'This is a post']),
+                    PayloadFactory::groupingBucket(['title' => 'A message from Rick', 'content' => 'Never gonna give you up']),
+                )
+            );
+
+        $results = SearchQuery::make($client)
+            ->directives(new ColumnGroupDirective(['title']))
+            ->search('group:title');
+
+        $this->assertCount(2, $results->hits);
+
+        $this->assertEquals(
+            ['title' => 'Hello world', 'content' => 'This is a post'],
+            $results->hits[0]->data
+        );
+        $this->assertNotNull($results->hits[0]->groupingData);
+
+        $this->assertEquals(
+            ['title' => 'A message from Rick', 'content' => 'Never gonna give you up'],
+            $results->hits[1]->data
+        );
+        $this->assertNotNull($results->hits[1]->groupingData);
+    }
+
+    /** @test */
+    public function it_can_change_the_size()
+    {
+        $client = FakeElasticSearchClient::make()->assertSize(200);
+
+        SearchQuery::make($client)
+            ->size(200)
+            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->search('search query');
+    }
+
+    /** @test */
+    public function it_can_change_the_index()
+    {
+        $client = FakeElasticSearchClient::make()->assertIndex('fake-index');
+
+        SearchQuery::make($client)
+            ->index('fake-index')
+            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->search('search query');
     }
 }

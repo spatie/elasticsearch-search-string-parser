@@ -10,13 +10,19 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
 
 class FakeElasticSearchClient extends Client
 {
-    private ?Query $expectedQuery = null;
+    private ?Query $queryAssertion = null;
 
-    private ?AggregationCollection $expectedAggregations = null;
+    private ?AggregationCollection $aggregationAssertion = null;
+
+    private ?int $sizeAssertion = null;
+
+    private ?string $indexAssertion = null;
 
     private array $hits = [];
 
     private array $aggregations = [];
+
+    private array $assertions = [];
 
     public static function make(): static
     {
@@ -30,19 +36,37 @@ class FakeElasticSearchClient extends Client
 
     public function assertQuery(Query $query): self
     {
-        $this->expectedQuery = $query;
+        $this->assertions[] = 'query';
+        $this->queryAssertion = $query;
 
         return $this;
     }
 
-    public function expectAggregations(Aggregation ...$aggregations): self
+    public function assertAggregation(Aggregation ...$aggregations): self
     {
-        $this->expectedAggregations = new AggregationCollection(...$aggregations);
+        $this->assertions[] = 'aggregation';
+        $this->aggregationAssertion = new AggregationCollection(...$aggregations);
 
         return $this;
     }
 
-    public function withHits(array $hits): self
+    public function assertIndex(?string $index): self
+    {
+        $this->assertions[] = 'index';
+        $this->indexAssertion = $index;
+
+        return $this;
+    }
+
+    public function assertSize(?int $size)
+    {
+        $this->assertions[] = 'size';
+        $this->sizeAssertion = $size;
+
+        return $this;
+    }
+
+    public function withHits(array ...$hits): self
     {
         $this->hits = $hits;
 
@@ -58,12 +82,20 @@ class FakeElasticSearchClient extends Client
 
     public function search(array $params = [])
     {
-        if ($this->expectedQuery) {
-            Assert::assertEquals($this->expectedQuery->toArray(), $params['body']['query']);
+        if (in_array('query', $this->assertions)) {
+            Assert::assertEquals($this->queryAssertion->toArray(), $params['body']['query']);
         }
 
-        if($this->expectedAggregations){
-            Assert::assertEquals($this->expectedAggregations->toArray(), $params['body']['aggs']);
+        if(in_array('aggregation', $this->assertions)){
+            Assert::assertEquals($this->aggregationAssertion->toArray(), $params['body']['aggs']);
+        }
+
+        if(in_array('size', $this->assertions)){
+            Assert::assertEquals($this->sizeAssertion, $params['size'] ?? null);
+        }
+
+        if(in_array('index', $this->assertions)){
+            Assert::assertEquals($this->indexAssertion, $params['index'] ?? null);
         }
 
         return [
