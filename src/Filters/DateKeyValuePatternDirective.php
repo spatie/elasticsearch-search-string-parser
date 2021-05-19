@@ -43,7 +43,7 @@ class DateKeyValuePatternDirective extends PatternDirective
 
     public function pattern(): string
     {
-        return "/{$this->key}:(?<value>\d{4}\-\d{2}-\d{2})(?:$|\s)/ig";
+        return "/{$this->key}:(?<value>\d{4}\-\d{2}-\d{2})(?:$|\s)/i";
     }
 
     protected function validateDate(string $date, string $format = 'Y-m-d'): bool

@@ -61,6 +61,22 @@ class SearchQueryTest extends TestCase
     }
 
     /** @test */
+    public function it_can_search_with_multiple_of_the_same_pattern_directive()
+    {
+        $expectedQuery = BoolQuery::create()
+            ->add(MultiMatchQuery::create('hello-world', ['title']))
+            ->add(MultiMatchQuery::create('hello-belgium', ['title']));
+
+        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+
+        SearchQuery::make($client)
+            ->directives(
+                FuzzyKeyValuePatternDirective::forField('title', 'title'),
+            )
+            ->search('title:hello-world title:hello-belgium');
+    }
+
+    /** @test */
     public function it_can_search_with_a_pattern_directive_with_fallback_to_the_base_directive()
     {
         $expectedQuery = BoolQuery::create()

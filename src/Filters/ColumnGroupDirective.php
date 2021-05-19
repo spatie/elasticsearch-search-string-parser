@@ -31,7 +31,7 @@ class ColumnGroupDirective extends GroupDirective
 
     public function pattern(): string
     {
-        return '/group:(?<value>.*?)(?:$|\s)/ig';
+        return '/group:(?<value>.*?)(?:$|\s)/i';
     }
 
     public function transformToHits(array $results): array
