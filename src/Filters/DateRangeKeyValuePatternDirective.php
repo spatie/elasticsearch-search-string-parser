@@ -51,7 +51,7 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
 
     public function pattern(): string
     {
-        return "/{$this->key}:(?<range>\>|\>=|\<|\<=)(?<value>.*?)(?:$|\s)/i";
+        return "/{$this->key}:(?<range>[<>]=?)(?<value>.*?)(?:$|\s)/i";
     }
 
     protected function validateDateTime(string $value): bool
