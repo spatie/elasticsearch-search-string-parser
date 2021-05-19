@@ -33,7 +33,7 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
             return;
         }
 
-        $dateTime = DateTimeImmutable::createFromFormat('Y-m-d', $values['value']);
+        $dateTime = new DateTimeImmutable($values['value']);
         $dateTimeString = $dateTime->format(DateTimeImmutable::ATOM);
 
         $rangeQuery = RangeQuery::create($this->field);
@@ -43,6 +43,7 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
             '>=' => $rangeQuery->gte($dateTimeString),
             '<' => $rangeQuery->lt($dateTimeString),
             '<=' => $rangeQuery->lte($dateTimeString),
+            default => null,
         };
 
         $builder->addQuery($rangeQuery);
