@@ -42,7 +42,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
 
     public function pattern(): string
     {
-        return "/{$this->key}:(?<value>.*?)(?:$|\s)/i";
+        return "/{$this->key}:(?<value>.*?)(?:$|\s)/ig";
     }
 
     public function transformToSuggestions(array $results): array

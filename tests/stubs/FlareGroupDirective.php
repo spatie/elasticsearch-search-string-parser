@@ -34,7 +34,7 @@ class FlareGroupDirective extends GroupDirective
 
     public function pattern(): string
     {
-        return '/group:(?<value>.*?)(?:$|\s)/i';
+        return '/group:(?<value>.*?)(?:$|\s)/ig';
     }
 
     public function apply(Builder $builder, string $pattern, array $values = []): void
