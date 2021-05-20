@@ -3,10 +3,7 @@
 namespace Spatie\ElasticSearchQueryBuilder\Filters;
 
 use DateTimeImmutable;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MatchQuery;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\RangeQuery;
 
 class DateKeyValuePatternDirective extends PatternDirective
@@ -27,11 +24,12 @@ class DateKeyValuePatternDirective extends PatternDirective
 
     public function apply(Builder $builder, string $pattern, array $values = []): void
     {
-        if (!$this->validateDate($values['value'])) {
+        $value = $this->parseDate($values['value']);
+
+        if (! $value) {
             return;
         }
 
-        $value = DateTimeImmutable::createFromFormat('Y-m-d', $values['value']);
         $day = $value->format('Y-m-d');
 
         $builder->addQuery(
@@ -43,13 +41,20 @@ class DateKeyValuePatternDirective extends PatternDirective
 
     public function pattern(): string
     {
-        return "/{$this->key}:(?<value>\d{4}\-\d{2}-\d{2})(?:$|\s)/i";
+        return "/{$this->key}:(?<value>\d{4}\-\d{2}-\d{2}|today)(?:$|\s)/i";
     }
-
-    protected function validateDate(string $date, string $format = 'Y-m-d'): bool
+    protected function parseDate(string $date, string $format = 'Y-m-d'): ?DateTimeImmutable
     {
+        if ($date === 'today') {
+            return new DateTimeImmutable();
+        }
+
         $dateTime = DateTimeImmutable::createFromFormat($format, $date);
 
-        return $dateTime && $dateTime->format($format) === $date;
+        if(! $dateTime || $dateTime->format($format) !== $date) {
+            return null;
+        }
+
+        return $dateTime;
     }
 }
