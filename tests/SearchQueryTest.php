@@ -5,9 +5,9 @@ namespace Spatie\ElasticSearchQueryBuilder\Tests;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
-use Spatie\ElasticSearchQueryBuilder\Filters\ColumnGroupDirective;
-use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
-use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyValueDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\ColumnGroupDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\FuzzyKeyValuePatternDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\FuzzyValueBaseDirective;
 use Spatie\ElasticSearchQueryBuilder\SearchHit;
 use Spatie\ElasticSearchQueryBuilder\SearchQuery;
 use Spatie\ElasticSearchQueryBuilder\Tests\Fakes\FakeElasticSearchClient;
@@ -24,7 +24,7 @@ class SearchQueryTest extends TestCase
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
         SearchQuery::make($client)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
     }
 
@@ -37,8 +37,8 @@ class SearchQueryTest extends TestCase
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
         SearchQuery::make($client)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
-            ->directives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('title:hello-world');
     }
 
@@ -52,8 +52,8 @@ class SearchQueryTest extends TestCase
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
         SearchQuery::make($client)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
-            ->directives(
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+            ->patternDirectives(
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
                 FuzzyKeyValuePatternDirective::forField('content', 'content'),
             )
@@ -70,7 +70,7 @@ class SearchQueryTest extends TestCase
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
         SearchQuery::make($client)
-            ->directives(
+            ->patternDirectives(
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
             )
             ->search('title:hello-world title:hello-belgium');
@@ -86,8 +86,8 @@ class SearchQueryTest extends TestCase
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
         SearchQuery::make($client)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
-            ->directives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('another one title:hello-world');
     }
 
@@ -100,8 +100,8 @@ class SearchQueryTest extends TestCase
         );
 
         SearchQuery::make($client)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
-            ->directives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('something');
     }
 
@@ -134,7 +134,7 @@ class SearchQueryTest extends TestCase
         );
 
         $results = SearchQuery::make($client)
-            ->directives(new FuzzyKeyValuePatternDirective('title', ['title']))
+            ->patternDirectives(new FuzzyKeyValuePatternDirective('title', ['title']))
             ->search('title:test');
 
         $this->assertArrayHasKey('title', $results->suggestions);
@@ -158,7 +158,7 @@ class SearchQueryTest extends TestCase
             );
 
         $results = SearchQuery::make($client)
-            ->directives(new ColumnGroupDirective(['title']))
+            ->patternDirectives(new ColumnGroupDirective(['title']))
             ->search('group:title');
 
         $this->assertCount(2, $results->hits);
@@ -183,7 +183,7 @@ class SearchQueryTest extends TestCase
 
         SearchQuery::make($client)
             ->size(200)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
     }
 
@@ -194,7 +194,7 @@ class SearchQueryTest extends TestCase
 
         SearchQuery::make($client)
             ->from(200)
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
     }
 
@@ -205,7 +205,7 @@ class SearchQueryTest extends TestCase
 
         SearchQuery::make($client)
             ->index('fake-index')
-            ->baseDirective(new FuzzyValueDirective(['title', 'content']))
+            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
     }
 }

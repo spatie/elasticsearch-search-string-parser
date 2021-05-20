@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Filters;
+namespace Spatie\ElasticSearchQueryBuilder\Directives;
 
 use Cassandra\Date;
 use DateTimeImmutable;

@@ -1,14 +1,16 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Filters;
+namespace Spatie\ElasticSearchQueryBuilder\Directives;
 
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 
-abstract class Directive
+abstract class PatternDirective
 {
     protected bool $useSuggestions = true;
 
-    abstract public function apply(Builder $builder, string $value): void;
+    abstract public function apply(Builder $builder, string $pattern, array $values = []): void;
+
+    abstract public function pattern(): string;
 
     public function transformToSuggestions(array $results): array
     {
@@ -22,7 +24,7 @@ abstract class Directive
         return $this;
     }
 
-    public function canApply(string $value): bool
+    public function canApply(string $pattern, array $values = []): bool
     {
         return true;
     }

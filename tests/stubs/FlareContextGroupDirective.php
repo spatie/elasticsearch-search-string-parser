@@ -12,7 +12,7 @@ use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TopHitsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\TermQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Sorts\Sort;
-use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\GroupDirective;
 use Spatie\ElasticSearchQueryBuilder\SearchHit;
 
 class FlareContextGroupDirective extends GroupDirective

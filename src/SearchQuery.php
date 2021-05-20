@@ -4,17 +4,17 @@ namespace Spatie\ElasticSearchQueryBuilder;
 
 use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Filters\Directive;
-use Spatie\ElasticSearchQueryBuilder\Filters\FuzzyKeyValuePatternDirective;
-use Spatie\ElasticSearchQueryBuilder\Filters\GroupDirective;
-use Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\BaseDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\FuzzyKeyValuePatternDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\GroupDirective;
+use Spatie\ElasticSearchQueryBuilder\Directives\PatternDirective;
 
 class SearchQuery
 {
-    /** @var \Spatie\ElasticSearchQueryBuilder\Filters\PatternDirective[] */
+    /** @var \Spatie\ElasticSearchQueryBuilder\Directives\PatternDirective[] */
     protected array $patternDirectives = [];
 
-    protected ?Directive $baseDirective = null;
+    protected ?BaseDirective $baseDirective = null;
 
     protected Builder $builder;
 
@@ -69,18 +69,18 @@ class SearchQuery
      * after all other directive have been applied and removed from the
      * search string.
      *
-     * @param \Spatie\ElasticSearchQueryBuilder\Filters\Directive $filter
+     * @param \Spatie\ElasticSearchQueryBuilder\Directives\BaseDirective $filter
      *
      * @return $this
      */
-    public function baseDirective(Directive $filter): static
+    public function baseDirective(BaseDirective $filter): static
     {
         $this->baseDirective = $filter;
 
         return $this;
     }
 
-    public function directives(PatternDirective ...$patternDirectives): static
+    public function patternDirectives(PatternDirective ...$patternDirectives): static
     {
         $this->patternDirectives = $patternDirectives;
 
@@ -124,7 +124,7 @@ class SearchQuery
             );
 
         $suggestions = collect($appliedDirectives)
-            ->mapWithKeys(function (Directive|PatternDirective $directive) use ($results) {
+            ->mapWithKeys(function (BaseDirective|PatternDirective $directive) use ($results) {
                 $name = $directive instanceof FuzzyKeyValuePatternDirective
                     ? $directive->getKey()
                     : $directive::class;

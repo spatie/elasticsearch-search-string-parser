@@ -1,35 +1,34 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Filters;
+namespace Spatie\ElasticSearchQueryBuilder\Directives;
 
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
 
-class FuzzyKeyValuePatternDirective extends PatternDirective
+class FuzzyValueBaseDirective extends BaseDirective
 {
-    public function __construct(protected string $key, protected array $fields)
+    public function __construct(protected array $fields)
     {
     }
 
-    public static function forField(string $key, string $field): static
+    public static function forField(string $field): static
     {
-        return new static($key, [$field]);
+        return new static([$field]);
     }
 
-    public static function forFields(string $key, string ...$fields): static
+    public static function forFields(string ...$fields): static
     {
-        return new static($key, $fields);
+        return new static($fields);
     }
 
-    public function getKey(): string
+    public function apply(Builder $builder, string $value): void
     {
-        return $this->key;
-    }
+        if (empty($value)) {
+            return;
+        }
 
-    public function apply(Builder $builder, string $pattern, array $values = []): void
-    {
-        $builder->addQuery(MultiMatchQuery::create($values['value'], $this->fields));
+        $builder->addQuery(MultiMatchQuery::create($value, $this->fields));
 
         if ($this->useSuggestions === false) {
             return;
@@ -38,11 +37,6 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         foreach ($this->fields as $field) {
             $builder->addAggregation(TermsAggregation::create("_{$field}_suggestions", "{$field}.keyword"));
         }
-    }
-
-    public function pattern(): string
-    {
-        return "/{$this->key}:(?<value>.*?)(?:$|\s)/i";
     }
 
     public function transformToSuggestions(array $results): array

@@ -159,7 +159,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [Alex Vanderbist](https://github.com/AlexVanderbist)
-- [Alex Vanderbist](https://github.com/rubenvanassche)
+- [Ruben Van Assche](https://github.com/rubenvanassche)
 - [All Contributors](../../contributors)
 
 ## License
