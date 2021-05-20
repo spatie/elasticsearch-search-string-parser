@@ -10,7 +10,7 @@ class BoolQuery implements Query
     protected array $must = [];
     protected array $filter = [];
     protected array $should = [];
-    protected array $mustNot = [];
+    protected array $must_not = [];
 
     public static function create(): static
     {
@@ -19,7 +19,7 @@ class BoolQuery implements Query
 
     public function add(Query $query, string $type = 'must'): static
     {
-        if (! in_array($type, ['must', 'filter', 'should', 'mustNot'])) {
+        if (! in_array($type, ['must', 'filter', 'should', 'must_not'])) {
             throw new BoolQueryTypeDoesNotExist($type);
         }
 
@@ -35,7 +35,7 @@ class BoolQuery implements Query
             'must' => array_map(fn (Query $query) => $query->toArray(), $this->must),
             'filter' => array_map(fn (Query $query) => $query->toArray(), $this->filter),
             'should' => array_map(fn (Query $query) => $query->toArray(), $this->should),
-            'must_not' => array_map(fn (Query $query) => $query->toArray(), $this->mustNot),
+            'must_not' => array_map(fn (Query $query) => $query->toArray(), $this->must_not),
         ];
 
         return [
