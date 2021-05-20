@@ -2,8 +2,6 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Builder\Queries;
 
-use JetBrains\PhpStorm\ArrayShape;
-
 class MultiMatchQuery implements Query
 {
     public static function create(
@@ -21,7 +19,6 @@ class MultiMatchQuery implements Query
     ) {
     }
 
-    #[ArrayShape(['multi_match' => 'array'])]
     public function toArray(): array
     {
         return [

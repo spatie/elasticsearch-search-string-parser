@@ -2,7 +2,6 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Builder\Queries;
 
-use JetBrains\PhpStorm\ArrayShape;
 use Spatie\ElasticSearchQueryBuilder\Builder\Exceptions\BoolQueryTypeDoesNotExist;
 
 class BoolQuery implements Query
@@ -28,7 +27,6 @@ class BoolQuery implements Query
         return $this;
     }
 
-    #[ArrayShape(['bool' => "array"])]
     public function toArray(): array
     {
         $bool = [

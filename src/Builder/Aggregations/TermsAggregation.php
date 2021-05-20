@@ -2,7 +2,6 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Builder\Aggregations;
 
-use JetBrains\PhpStorm\ArrayShape;
 use Spatie\ElasticSearchQueryBuilder\Builder\AggregationCollection;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Concerns\WithAggregations;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Concerns\WithMissing;
@@ -52,11 +51,6 @@ class TermsAggregation extends Aggregation
         return $this;
     }
 
-    #[ArrayShape([
-        'terms' => "string[]",
-        'meta' => "mixed",
-        'aggs' => "mixed"
-    ])]
     public function toArray(): array
     {
         $parameters = [
