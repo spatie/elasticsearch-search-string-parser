@@ -7,16 +7,16 @@ use JetBrains\PhpStorm\ArrayShape;
 class MatchQuery implements Query
 {
     public static function create(
-        string $query,
         string $field,
+        string $query,
         int $fuzziness = 2
     ): self {
-        return new self($query, $field, $fuzziness);
+        return new self($field, $query, $fuzziness);
     }
 
     public function __construct(
-        protected string $query,
         protected string $field,
+        protected string $query,
         protected int $fuzziness = 2
     ) {
     }
