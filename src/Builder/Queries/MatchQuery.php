@@ -7,7 +7,7 @@ class MatchQuery implements Query
     public static function create(
         string $field,
         string $query,
-        int $fuzziness = 0
+        null|string|int $fuzziness = null
     ): self {
         return new self($field, $query, $fuzziness);
     }
@@ -15,19 +15,24 @@ class MatchQuery implements Query
     public function __construct(
         protected string $field,
         protected string $query,
-        protected int $fuzziness = 0
+        protected null|string|int $fuzziness = null
     ) {
     }
 
     public function toArray(): array
     {
-        return [
+        $match = [
             'match' => [
                 $this->field => [
                     'query' => $this->query,
-                    'fuzziness' => $this->fuzziness,
                 ],
             ],
         ];
+
+        if ($this->fuzziness) {
+            $match['match'][$this->field]['fuzziness'] = $this->fuzziness;
+        }
+
+        return $match;
     }
 }
