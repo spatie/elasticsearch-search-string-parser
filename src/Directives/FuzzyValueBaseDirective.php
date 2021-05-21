@@ -28,7 +28,7 @@ class FuzzyValueBaseDirective extends BaseDirective
             return;
         }
 
-        $builder->addQuery(MultiMatchQuery::create($value, $this->fields));
+        $builder->addQuery(MultiMatchQuery::create($value, $this->fields, fuzziness: 'auto'));
 
         if ($this->useSuggestions === false) {
             return;

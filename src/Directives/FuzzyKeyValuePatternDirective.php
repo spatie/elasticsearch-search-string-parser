@@ -29,7 +29,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
 
     public function apply(Builder $builder, string $pattern, array $values = []): void
     {
-        $builder->addQuery(MultiMatchQuery::create($values['value'], $this->fields));
+        $builder->addQuery(MultiMatchQuery::create($values['value'], $this->fields, fuzziness: 'auto'));
 
         if ($this->useSuggestions === false) {
             return;
