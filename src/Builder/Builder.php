@@ -2,6 +2,7 @@
 
 namespace Spatie\ElasticSearchQueryBuilder\Builder;
 
+use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Aggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
@@ -11,6 +12,16 @@ class Builder
     protected ?BoolQuery $query = null;
 
     protected ?AggregationCollection $aggregations = null;
+
+    protected ?string $searchIndex = null;
+
+    protected ?int $size = null;
+
+    protected ?int $from = null;
+
+    public function __construct(protected Client $client)
+    {
+    }
 
     public function addQuery(Query $query, string $boolType = 'must'): static
     {
@@ -30,6 +41,50 @@ class Builder
         }
 
         $this->aggregations->add($aggregation);
+
+        return $this;
+    }
+
+    public function search(): array
+    {
+        $payload = $this->getPayload();
+
+        $params = [
+            'body' => $payload,
+        ];
+
+        if ($this->searchIndex) {
+            $params['index'] = $this->searchIndex;
+        }
+
+        if ($this->size !== null) {
+            $params['size'] = $this->size;
+        }
+
+        if ($this->from !== null) {
+            $params['from'] = $this->from;
+        }
+
+        return $this->client->search($params);
+    }
+
+    public function index(string $searchIndex): static
+    {
+        $this->searchIndex = $searchIndex;
+
+        return $this;
+    }
+
+    public function size(int $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function from(int $from): static
+    {
+        $this->from = $from;
 
         return $this;
     }

@@ -23,7 +23,7 @@ class SearchQueryTest extends TestCase
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
     }
@@ -36,7 +36,7 @@ class SearchQueryTest extends TestCase
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('title:hello-world');
@@ -51,7 +51,7 @@ class SearchQueryTest extends TestCase
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->patternDirectives(
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
@@ -69,7 +69,7 @@ class SearchQueryTest extends TestCase
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->patternDirectives(
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
             )
@@ -85,7 +85,7 @@ class SearchQueryTest extends TestCase
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('another one title:hello-world');
@@ -99,7 +99,7 @@ class SearchQueryTest extends TestCase
             TermsAggregation::create('_content_suggestions', 'content.keyword'),
         );
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
             ->search('something');
@@ -113,7 +113,7 @@ class SearchQueryTest extends TestCase
             PayloadFactory::hit('A message from Rick', 'Never gonna give you up'),
         );
 
-        $results = SearchQuery::make($client)->search('');
+        $results = SearchQuery::forClient($client)->search('');
 
         $this->assertCount(2, $results->hits);
         $this->assertEquals([
@@ -133,7 +133,7 @@ class SearchQueryTest extends TestCase
             )
         );
 
-        $results = SearchQuery::make($client)
+        $results = SearchQuery::forClient($client)
             ->patternDirectives(new FuzzyKeyValuePatternDirective('title', ['title']))
             ->search('title:test');
 
@@ -157,7 +157,7 @@ class SearchQueryTest extends TestCase
                 )
             );
 
-        $results = SearchQuery::make($client)
+        $results = SearchQuery::forClient($client)
             ->patternDirectives(new ColumnGroupDirective(['title']))
             ->search('group:title');
 
@@ -181,7 +181,7 @@ class SearchQueryTest extends TestCase
     {
         $client = FakeElasticSearchClient::make()->assertSize(200);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->size(200)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
@@ -192,7 +192,7 @@ class SearchQueryTest extends TestCase
     {
         $client = FakeElasticSearchClient::make()->assertFrom(200);
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->from(200)
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
@@ -203,7 +203,7 @@ class SearchQueryTest extends TestCase
     {
         $client = FakeElasticSearchClient::make()->assertIndex('fake-index');
 
-        SearchQuery::make($client)
+        SearchQuery::forClient($client)
             ->index('fake-index')
             ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
             ->search('search query');
