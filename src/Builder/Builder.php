@@ -6,12 +6,15 @@ use Elasticsearch\Client;
 use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\Aggregation;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
 use Spatie\ElasticSearchQueryBuilder\Builder\Queries\Query;
+use Spatie\ElasticSearchQueryBuilder\Builder\Sorts\Sort;
 
 class Builder
 {
     protected ?BoolQuery $query = null;
 
     protected ?AggregationCollection $aggregations = null;
+
+    protected ?SortCollection $sorts = null;
 
     protected ?string $searchIndex = null;
 
@@ -41,6 +44,17 @@ class Builder
         }
 
         $this->aggregations->add($aggregation);
+
+        return $this;
+    }
+
+    public function addSort(Sort $sort): static
+    {
+        if (! $this->sorts) {
+            $this->sorts = new SortCollection();
+        }
+
+        $this->sorts->add($sort);
 
         return $this;
     }
@@ -99,6 +113,10 @@ class Builder
 
         if ($this->aggregations) {
             $payload['aggs'] = $this->aggregations->toArray();
+        }
+
+        if ($this->sorts) {
+            $payload['sorts'] = $this->sorts->toArray();
         }
 
         return $payload;
