@@ -6,7 +6,7 @@ class MatchQuery implements Query
 {
     public static function create(
         string $field,
-        string $query,
+        string|int $query,
         null|string|int $fuzziness = null
     ): self {
         return new self($field, $query, $fuzziness);
@@ -14,7 +14,7 @@ class MatchQuery implements Query
 
     public function __construct(
         protected string $field,
-        protected string $query,
+        protected string|int $query,
         protected null|string|int $fuzziness = null
     ) {
     }
