@@ -9,6 +9,7 @@ use Spatie\ElasticSearchQueryBuilder\Directives\BaseDirective;
 use Spatie\ElasticSearchQueryBuilder\Directives\GroupDirective;
 use Spatie\ElasticSearchQueryBuilder\Directives\PatternDirective;
 
+/** @mixin \Spatie\ElasticSearchQueryBuilder\Builder\Builder */
 class SearchQuery
 {
     use ForwardsCalls;
