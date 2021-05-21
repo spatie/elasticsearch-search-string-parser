@@ -116,7 +116,7 @@ class Builder
         }
 
         if ($this->sorts) {
-            $payload['sorts'] = $this->sorts->toArray();
+            $payload['sort'] = $this->sorts->toArray();
         }
 
         return $payload;
