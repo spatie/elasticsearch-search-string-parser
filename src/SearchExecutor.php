@@ -51,7 +51,12 @@ class SearchExecutor
             })
             ->toArray();
 
-        return new SearchResults($hits, $suggestions, $results);
+        return new SearchResults(
+            $hits,
+            $suggestions,
+            $this->groupDirective !== null,
+            $results
+        );
     }
 
     protected function applyQueryToBuilder(string $query): void

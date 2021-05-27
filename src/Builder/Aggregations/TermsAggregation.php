@@ -51,7 +51,7 @@ class TermsAggregation extends Aggregation
         return $this;
     }
 
-    public function toArray(): array
+    public function payload(): array
     {
         $parameters = [
             'field' => $this->field,
