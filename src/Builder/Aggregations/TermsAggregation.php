@@ -14,8 +14,6 @@ class TermsAggregation extends Aggregation
 
     protected ?int $size = null;
 
-    protected ?array $metaData = null;
-
     protected ?array $order = null;
 
     public static function create(string $name, string $field): self
@@ -33,13 +31,6 @@ class TermsAggregation extends Aggregation
     public function size(int $size): self
     {
         $this->size = $size;
-
-        return $this;
-    }
-
-    public function metaData(array $metaData): self
-    {
-        $this->metaData = $metaData;
 
         return $this;
     }
@@ -75,10 +66,6 @@ class TermsAggregation extends Aggregation
 
         if (! $this->aggregations->isEmpty()) {
             $aggregation['aggs'] = $this->aggregations->toArray();
-        }
-
-        if ($this->metaData !== null) {
-            $aggregation['meta'] = $this->metaData;
         }
 
         return $aggregation;
