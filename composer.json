@@ -1,5 +1,5 @@
 {
-    "name": "spatie/elasticsearch-query-builder",
+    "name": "spatie/elasticsearch-search-string-parser",
     "description": "Build Elasticsearch queries based of a query string",
     "keywords": [
         "spatie"
@@ -18,10 +18,16 @@
             "role": "Developer"
         }
     ],
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/spatie/elasticsearch-query-builder"
+    }
+    ],
     "require": {
         "php": "^8.0",
         "elasticsearch/elasticsearch": "^7.12",
-        "illuminate/collections": "^8.40"
+        "illuminate/collections": "^8.40",
+        "spatie/elasticsearch-query-builder": "dev-main"
     },
     "require-dev": {
         "brianium/paratest": "^6.2",
@@ -32,12 +38,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\ElasticSearchQueryBuilder\\": "src"
+            "Spatie\\ElasticsearchSearchStringParser\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\ElasticSearchQueryBuilder\\Tests\\": "tests"
+            "Spatie\\ElasticsearchSearchStringParser\\Tests\\": "tests"
         }
     },
     "scripts": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data;
+namespace Spatie\ElasticsearchSearchStringParser\Tests\stubs\Data;
 
 use DateTime;
 

@@ -1,17 +1,17 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Tests;
+namespace Spatie\ElasticsearchSearchStringParser\Tests;
 
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\BoolQuery;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\MultiMatchQuery;
-use Spatie\ElasticSearchQueryBuilder\Directives\ColumnGroupDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\FuzzyKeyValuePatternDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\FuzzyValueBaseDirective;
-use Spatie\ElasticSearchQueryBuilder\SearchHit;
-use Spatie\ElasticSearchQueryBuilder\SearchQuery;
-use Spatie\ElasticSearchQueryBuilder\Tests\Fakes\FakeElasticSearchClient;
-use Spatie\ElasticSearchQueryBuilder\Tests\Support\PayloadFactory;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Queries\BoolQuery;
+use Spatie\ElasticsearchQueryBuilder\Builder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchSearchStringParser\Directives\ColumnGroupDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\FuzzyKeyValuePatternDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\FuzzyValueBaseDirective;
+use Spatie\ElasticsearchSearchStringParser\SearchHit;
+use Spatie\ElasticsearchSearchStringParser\SearchQuery;
+use Spatie\ElasticsearchSearchStringParser\Tests\Fakes\FakeElasticSearchClient;
+use Spatie\ElasticsearchSearchStringParser\Tests\Support\PayloadFactory;
 
 class SearchQueryTest extends TestCase
 {

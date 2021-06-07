@@ -1,19 +1,19 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Tests\stubs;
+namespace Spatie\ElasticsearchSearchStringParser\Tests\stubs;
 
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\FilterAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\MaxAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\MinAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\NestedAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\ReverseNestedAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TermsAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Aggregations\TopHitsAggregation;
-use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\TermQuery;
-use Spatie\ElasticSearchQueryBuilder\Builder\Sorts\Sort;
-use Spatie\ElasticSearchQueryBuilder\Directives\GroupDirective;
-use Spatie\ElasticSearchQueryBuilder\SearchHit;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\FilterAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\MaxAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\MinAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\NestedAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\ReverseNestedAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TopHitsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Builder;
+use Spatie\ElasticsearchQueryBuilder\Builder\Queries\TermQuery;
+use Spatie\ElasticsearchQueryBuilder\Builder\Sorts\Sort;
+use Spatie\ElasticsearchSearchStringParser\Directives\GroupDirective;
+use Spatie\ElasticsearchSearchStringParser\SearchHit;
 
 class FlareContextGroupDirective extends GroupDirective
 {

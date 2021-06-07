@@ -114,14 +114,14 @@ composer require spatie/laravel-elasticsearch-query-builder
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\ElasticSearchQueryBuilder\ElasticSearchQueryBuilderServiceProvider" --tag="laravel-elasticsearch-query-builder-migrations"
+php artisan vendor:publish --provider="Spatie\ElasticsearchSearchStringParser\ElasticSearchQueryBuilderServiceProvider" --tag="laravel-elasticsearch-query-builder-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\ElasticSearchQueryBuilder\ElasticSearchQueryBuilderServiceProvider" --tag="laravel-elasticsearch-query-builder-config"
+php artisan vendor:publish --provider="Spatie\ElasticsearchSearchStringParser\ElasticSearchQueryBuilderServiceProvider" --tag="laravel-elasticsearch-query-builder-config"
 ```
 
 This is the contents of the published config file:
@@ -134,7 +134,7 @@ return [
 ## Usage
 
 ```php
-$laravel-elasticsearch-query-builder = new Spatie\ElasticSearchQueryBuilder();
+$laravel-elasticsearch-query-builder = new Spatie\ElasticsearchSearchStringParser();
 echo $laravel-elasticsearch-query-builder->echoPhrase('Hello, Spatie!');
 ```
 

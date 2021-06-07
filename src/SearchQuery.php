@@ -1,20 +1,20 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder;
+namespace Spatie\ElasticsearchSearchStringParser;
 
 use Elasticsearch\Client;
-use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Concerns\ForwardsCalls;
-use Spatie\ElasticSearchQueryBuilder\Directives\BaseDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\GroupDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\PatternDirective;
+use Spatie\ElasticsearchQueryBuilder\Builder;
+use Spatie\ElasticsearchSearchStringParser\Concerns\ForwardsCalls;
+use Spatie\ElasticsearchSearchStringParser\Directives\BaseDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\GroupDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\PatternDirective;
 
-/** @mixin \Spatie\ElasticSearchQueryBuilder\Builder\Builder */
+/** @mixin \Spatie\ElasticsearchQueryBuilder\Builder */
 class SearchQuery
 {
     use ForwardsCalls;
 
-    /** @var \Spatie\ElasticSearchQueryBuilder\Directives\PatternDirective[] */
+    /** @var \Spatie\ElasticsearchSearchStringParser\Directives\PatternDirective[] */
     protected array $patternDirectives = [];
 
     protected ?BaseDirective $baseDirective = null;
@@ -40,7 +40,7 @@ class SearchQuery
      * after all other directive have been applied and removed from the
      * search string.
      *
-     * @param \Spatie\ElasticSearchQueryBuilder\Directives\BaseDirective $filter
+     * @param \Spatie\ElasticsearchSearchStringParser\Directives\BaseDirective $filter
      *
      * @return $this
      */

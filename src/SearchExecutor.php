@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder;
+namespace Spatie\ElasticsearchSearchStringParser;
 
-use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Directives\BaseDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\FuzzyKeyValuePatternDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\GroupDirective;
-use Spatie\ElasticSearchQueryBuilder\Directives\PatternDirective;
+use Spatie\ElasticsearchQueryBuilder\Builder;
+use Spatie\ElasticsearchSearchStringParser\Directives\BaseDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\FuzzyKeyValuePatternDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\GroupDirective;
+use Spatie\ElasticsearchSearchStringParser\Directives\PatternDirective;
 
 class SearchExecutor
 {

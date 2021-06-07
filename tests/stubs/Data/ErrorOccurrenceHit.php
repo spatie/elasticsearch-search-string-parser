@@ -1,8 +1,8 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Tests\stubs\Data;
+namespace Spatie\ElasticsearchSearchStringParser\Tests\stubs\Data;
 
-use Spatie\ElasticSearchQueryBuilder\SearchHit;
+use Spatie\ElasticsearchSearchStringParser\SearchHit;
 
 class ErrorOccurrenceHit
 {

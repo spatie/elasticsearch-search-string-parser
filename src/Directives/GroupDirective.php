@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Directives;
+namespace Spatie\ElasticsearchSearchStringParser\Directives;
 
 abstract class GroupDirective extends PatternDirective
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Directives;
+namespace Spatie\ElasticsearchSearchStringParser\Directives;
 
 use DateTimeImmutable;
-use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
-use Spatie\ElasticSearchQueryBuilder\Builder\Queries\RangeQuery;
+use Spatie\ElasticsearchQueryBuilder\Builder;
+use Spatie\ElasticsearchQueryBuilder\Builder\Queries\RangeQuery;
 
 class DateKeyValuePatternDirective extends PatternDirective
 {

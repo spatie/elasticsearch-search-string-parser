@@ -1,8 +1,8 @@
 <?php
 
-namespace Spatie\ElasticSearchQueryBuilder\Directives;
+namespace Spatie\ElasticsearchSearchStringParser\Directives;
 
-use Spatie\ElasticSearchQueryBuilder\Builder\Builder;
+use Spatie\ElasticsearchQueryBuilder\Builder;
 
 abstract class PatternDirective
 {
