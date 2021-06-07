@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Tests\Fakes;
+namespace Spatie\ElasticsearchStringParser\Tests\Fakes;
 
 use Elasticsearch\Client;
 use PHPUnit\Framework\Assert;
-use Spatie\ElasticsearchQueryBuilder\Builder\AggregationCollection;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\Aggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\Query;
+use Spatie\ElasticsearchQueryBuilder\AggregationCollection;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\Aggregation;
+use Spatie\ElasticsearchQueryBuilder\Queries\Query;
 
 class FakeElasticSearchClient extends Client
 {

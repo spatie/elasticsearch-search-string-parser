@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Tests\Support;
+namespace Spatie\ElasticsearchStringParser\Tests\Support;
 
 class PayloadFactory
 {

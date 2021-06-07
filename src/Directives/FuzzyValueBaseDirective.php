@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Directives;
+namespace Spatie\ElasticsearchStringParser\Directives;
 
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
 
 class FuzzyValueBaseDirective extends BaseDirective
 {

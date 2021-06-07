@@ -1,15 +1,15 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Directives;
+namespace Spatie\ElasticsearchStringParser\Directives;
 
 use Cassandra\Date;
 use DateTimeImmutable;
 use Exception;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\MatchQuery;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\MultiMatchQuery;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\RangeQuery;
+use Spatie\ElasticsearchQueryBuilder\Queries\MatchQuery;
+use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchQueryBuilder\Queries\RangeQuery;
 
 class DateRangeKeyValuePatternDirective extends PatternDirective
 {

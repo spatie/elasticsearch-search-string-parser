@@ -1,17 +1,17 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Tests;
+namespace Spatie\ElasticsearchStringParser\Tests;
 
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\BoolQuery;
-use Spatie\ElasticsearchQueryBuilder\Builder\Queries\MultiMatchQuery;
-use Spatie\ElasticsearchSearchStringParser\Directives\ColumnGroupDirective;
-use Spatie\ElasticsearchSearchStringParser\Directives\FuzzyKeyValuePatternDirective;
-use Spatie\ElasticsearchSearchStringParser\Directives\FuzzyValueBaseDirective;
-use Spatie\ElasticsearchSearchStringParser\SearchHit;
-use Spatie\ElasticsearchSearchStringParser\SearchQuery;
-use Spatie\ElasticsearchSearchStringParser\Tests\Fakes\FakeElasticSearchClient;
-use Spatie\ElasticsearchSearchStringParser\Tests\Support\PayloadFactory;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Queries\BoolQuery;
+use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchStringParser\Directives\ColumnGroupDirective;
+use Spatie\ElasticsearchStringParser\Directives\FuzzyKeyValuePatternDirective;
+use Spatie\ElasticsearchStringParser\Directives\FuzzyValueBaseDirective;
+use Spatie\ElasticsearchStringParser\SearchHit;
+use Spatie\ElasticsearchStringParser\SearchQuery;
+use Spatie\ElasticsearchStringParser\Tests\Fakes\FakeElasticSearchClient;
+use Spatie\ElasticsearchStringParser\Tests\Support\PayloadFactory;
 
 class SearchQueryTest extends TestCase
 {
@@ -19,7 +19,7 @@ class SearchQueryTest extends TestCase
     public function it_can_search_elastic_with_a_base_directive()
     {
         $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('search query', ['title', 'content']));
+            ->add(MultiMatchQuery::create('search query', ['title', 'content'], fuzziness: 'auto'));
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
@@ -32,7 +32,7 @@ class SearchQueryTest extends TestCase
     public function it_can_search_with_a_pattern_directive()
     {
         $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title']));
+            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'));
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
@@ -46,8 +46,8 @@ class SearchQueryTest extends TestCase
     public function it_can_search_with_multiple_pattern_directive()
     {
         $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title']))
-            ->add(MultiMatchQuery::create('hello', ['content']));
+            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+            ->add(MultiMatchQuery::create('hello', ['content'], fuzziness: 'auto'));
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
@@ -64,8 +64,8 @@ class SearchQueryTest extends TestCase
     public function it_can_search_with_multiple_of_the_same_pattern_directive()
     {
         $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title']))
-            ->add(MultiMatchQuery::create('hello-belgium', ['title']));
+            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+            ->add(MultiMatchQuery::create('hello-belgium', ['title'], fuzziness: 'auto'));
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
@@ -80,8 +80,8 @@ class SearchQueryTest extends TestCase
     public function it_can_search_with_a_pattern_directive_with_fallback_to_the_base_directive()
     {
         $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title']))
-            ->add(MultiMatchQuery::create('another one', ['title', 'content']));
+            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+            ->add(MultiMatchQuery::create('another one', ['title', 'content'], fuzziness: 'auto'));
 
         $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 

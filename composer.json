@@ -38,12 +38,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\ElasticsearchSearchStringParser\\": "src"
+            "Spatie\\ElasticsearchStringParser\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\ElasticsearchSearchStringParser\\Tests\\": "tests"
+            "Spatie\\ElasticsearchStringParser\\Tests\\": "tests"
         }
     },
     "scripts": {

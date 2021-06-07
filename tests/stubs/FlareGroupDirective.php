@@ -1,19 +1,19 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Tests\stubs;
+namespace Spatie\ElasticsearchStringParser\Tests\stubs;
 
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\CardinalityAggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\MaxAggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\MinAggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TopHitsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\CardinalityAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\MaxAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\MinAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TopHitsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Builder\Sorts\Sort;
-use Spatie\ElasticsearchSearchStringParser\Directives\GroupDirective;
-use Spatie\ElasticsearchSearchStringParser\SearchHit;
-use Spatie\ElasticsearchSearchStringParser\Tests\stubs\Data\ErrorOccurrence;
-use Spatie\ElasticsearchSearchStringParser\Tests\stubs\Data\ErrorOccurrenceGrouping;
-use Spatie\ElasticsearchSearchStringParser\Tests\stubs\Data\ErrorOccurrenceHit;
+use Spatie\ElasticsearchQueryBuilder\Sorts\Sort;
+use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
+use Spatie\ElasticsearchStringParser\SearchHit;
+use Spatie\ElasticsearchStringParser\Tests\stubs\Data\ErrorOccurrence;
+use Spatie\ElasticsearchStringParser\Tests\stubs\Data\ErrorOccurrenceGrouping;
+use Spatie\ElasticsearchStringParser\Tests\stubs\Data\ErrorOccurrenceHit;
 
 class FlareGroupDirective extends GroupDirective
 {

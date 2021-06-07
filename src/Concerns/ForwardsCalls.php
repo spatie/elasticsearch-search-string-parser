@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Concerns;
+namespace Spatie\ElasticsearchStringParser\Concerns;
 
 use BadMethodCallException;
 use Error;

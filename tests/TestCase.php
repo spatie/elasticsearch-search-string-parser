@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Tests;
+namespace Spatie\ElasticsearchStringParser\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 

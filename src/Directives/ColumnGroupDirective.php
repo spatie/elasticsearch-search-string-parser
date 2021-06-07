@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser\Directives;
+namespace Spatie\ElasticsearchStringParser\Directives;
 
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TermsAggregation;
-use Spatie\ElasticsearchQueryBuilder\Builder\Aggregations\TopHitsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
+use Spatie\ElasticsearchQueryBuilder\Aggregations\TopHitsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Builder\Sorts\Sort;
-use Spatie\ElasticsearchSearchStringParser\SearchHit;
+use Spatie\ElasticsearchQueryBuilder\Sorts\Sort;
+use Spatie\ElasticsearchStringParser\SearchHit;
 
 class ColumnGroupDirective extends GroupDirective
 {

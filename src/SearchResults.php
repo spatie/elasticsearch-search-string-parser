@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ElasticsearchSearchStringParser;
+namespace Spatie\ElasticsearchStringParser;
 
 class SearchResults
 {
