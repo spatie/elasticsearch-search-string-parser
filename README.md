@@ -1,98 +1,32 @@
 **PACKAGE IN DEVELOPMENT, DO NOT USE YET**
 
-# Build Elasticsearch queries based of a query string
+# Parse custom search strings and execute them using ElasticSearch
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-elasticsearch-query-builder.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-elasticsearch-query-builder)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/laravel-elasticsearch-query-builder/run-tests?label=tests)](https://github.com/spatie/laravel-elasticsearch-query-builder/actions?query=workflow%3Arun-tests+branch%3Amaster)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/spatie/laravel-elasticsearch-query-builder/Check%20&%20fix%20styling?label=code%20style)](https://github.com/spatie/laravel-elasticsearch-query-builder/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-elasticsearch-query-builder.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-elasticsearch-query-builder)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/elasticsearch-search-string-parser/run-tests?label=tests)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3Arun-tests+branch%3Amaster)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/spatie/elasticsearch-search-string-parser/Check%20&%20fix%20styling?label=code%20style)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
+[![Total Downloads](https://img.shields.io/packagist/dt/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
 
-Full readme coming soon
-
-
-```php
-[
-    'raw' => ['raw els response'],
-    'hits' => [],
-    'directives' => [
-        // alle applied directives
-        [
-            'directive' => 'comapny:aperture',
-            'options' => [], // optioneel options uit directive
-        ],
-    ],
-]
-
-
-$a = [
-    'hits' => [
-        [
-            'value' => ['object'],
-            'group' => ['key' => 'Error Class', 'last_seen_at' => '...', '...'], // of null
-        ]
-    ],
-    
-    // tbd
-    'filters' => [
-        'company' => [
-            'options' => [ ... ]
-        ],
-    ],
-]
-```
-
+This package allows you to convert a search string like `foo bar status:active @john.doe` to its corresponding ElasticSearch request. Any custom _directives_ like `status:active` and `@john.doe` can be added using regex and the [`spatie/elasticsearch-query-builder`](https://github.com/spatie/elasticsearch-query-builder). There's also basic support for grouping directives (e.g. `group_by:project`) and providing auto-completion suggestions for certain directives.
 
 ```php
-SearchBuilder::for($elasticsearch)
-    ->filters([
-        CompanyFilter::class,
-        UserFilter::class,
-    ])  
-    ->query('test subjects company:aperture @glados'); // query string can come from $request
+use Elasticsearch\ClientBuilder;
+use Spatie\ElasticsearchStringParser\SearchQuery;
+
+$subjects = SearchQuery::forClient(ClientBuilder::create())
+    ->baseDirective(new SubjectBaseDirective())
+    ->patternDirectives(
+        new CompanyDirective(),
+        new UserDirective(),
+    )  
+    ->search('deadly neurotoxin company:aperture @glados');
 ```
 
-Filters extract their filter strings using regex and build the underlying elasticsearch query with filters and
-facets. Finished ELS query looks something like this:
-
-```json
-{
-    "query": "test subjects",
-    "facets": {
-        "companies": {
-            "type": "value",
-            "size": 30
-        },
-        "users": {
-            "type": "value",
-            "size": 30
-        }
-    },
-    "filters": {
-        "all": [
-            {
-                "any": [
-                    {
-                        "companies": "aperture"
-                    }
-                ]
-            },
-            {
-                "any": [
-                    {
-                        "users": "glados"
-                    }
-                ]
-            }
-        ]
-    }
-}
-
-
-```
+In the example above, an ElasticSearch request is executed with the appropriate parameters set to search for results with the given company (`aperture`), user (`glados`) and subject string (`deadly neurotoxin`). The returned value is a `\Spatie\ElasticsearchStringParser\SearchResults` object that contains search results and suggestions for the applied directives.
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-elasticsearch-query-builder.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-elasticsearch-query-builder)
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/elasticsearch-search-string-parser.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/elasticsearch-search-string-parser)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source)
 . You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
@@ -106,34 +40,49 @@ postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards
 You can install the package via composer:
 
 ```bash
-composer require spatie/laravel-elasticsearch-query-builder
+composer require spatie/elasticsearch-search-string-parser
 ```
 
-You can publish and run the migrations with:
+## How it works: directives
 
-```bash
-php artisan vendor:publish --provider="Spatie\ElasticsearchStringParser\ElasticSearchQueryBuilderServiceProvider" --tag="laravel-elasticsearch-query-builder-migrations"
-php artisan migrate
+When creating a search string parser, you decide how each part of the search string is parsed by defining _directives_. When a directive is found in the search string, it is applied to the underlying ElasticSearch. Directives can be used to add basic match queries but also to add sorts, aggregations, facets, etc...
+
+Let's dive into the inner workings of the package by dissecting an example search string and its parser:
+
+```
+$searchString = 'cheap neurotoxin company:aperture deadly @glados';
+
+SearchQuery::forClient(ClientBuilder::create())
+    ->baseDirective(new SubjectBaseDirective())
+    ->patternDirectives(
+        new CompanyDirective(),
+        new UserDirective(),
+    )->search($searchString);
 ```
 
-You can publish the config file with:
+ A search string parser can have multiple `PatternDirective`s and at most one `BaseDirective`. In the example search string there are two pattern directives: `company:aperture` and `@glados`. These will be parsed by the `CompanyDirective` and `UserDirective`. The remaining string (`cheap nearotoxin deadly`) will be processed by the base directive.
 
-```bash
-php artisan vendor:publish --provider="Spatie\ElasticsearchStringParser\ElasticSearchQueryBuilderServiceProvider" --tag="laravel-elasticsearch-query-builder-config"
+To do this, we'll loop over all configured pattern directives. Each patter directive has a regular expression it looks for. If one of the directives finds a match in the search string, it will be applied and the match will be removed from the search string. The process is then repeated for the next match or the next pattern directive.
+
+Back to our example: the `CompanyDirective` is configured to match `company:(.*)`. In the example string, this regex pattern will match `company:aperture`. This means the `CompanyDirective` will be applied and a query for `company_name="aperture"` will be added to the ElasticSearch builder. Finally, the directive is removed from the search string, leaving us with the following string:
+
+```
+cheap neurotoxin deadly @glados
 ```
 
-This is the contents of the published config file:
+As there are no other matches for the `CompanyDirective`, we'll look for the `UserDirective` next. The user directive will search for `@(.*)` and thus match `@glados`. The `UserDirective` will now apply its queries to the ElasticSearch builder and remove the matches string. We're left with:
 
-```php
-return [
-];
 ```
+cheap neurotoxin deadly
+```
+
+There are no pattern directives left to apply. The entire remaining string is then passed to the `SubjectBaseDirective`. This base directive then decides what to do with the remaining search string, for example, using it for a fuzzy search on the subject field.
 
 ## Usage
 
 ```php
-$laravel-elasticsearch-query-builder = new Spatie\ElasticsearchStringParser();
-echo $laravel-elasticsearch-query-builder->echoPhrase('Hello, Spatie!');
+$elasticsearch-search-string-parser = new Spatie\ElasticsearchStringParser();
+echo $elasticsearch-search-string-parser->echoPhrase('Hello, Spatie!');
 ```
 
 ## Testing

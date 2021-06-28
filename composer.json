@@ -4,7 +4,7 @@
     "keywords": [
         "spatie"
     ],
-    "homepage": "https://github.com/spatie/laravel-elasticsearch-query-builder",
+    "homepage": "https://github.com/spatie/elasticsearch-search-string-parser",
     "license": "MIT",
     "authors": [
         {
