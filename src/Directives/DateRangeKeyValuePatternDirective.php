@@ -46,7 +46,7 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
             default => null,
         };
 
-        $builder->addQuery($rangeQuery);
+        $builder->addQuery($rangeQuery, 'filter');
     }
 
     public function pattern(): string

@@ -35,7 +35,8 @@ class DateKeyValuePatternDirective extends PatternDirective
         $builder->addQuery(
             RangeQuery::create($this->field)
                 ->gte("{$day}||/d")
-                ->lt("{$day}||+1d/d")
+                ->lt("{$day}||+1d/d"),
+            'filter'
         );
     }
 
