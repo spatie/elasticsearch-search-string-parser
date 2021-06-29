@@ -24,9 +24,11 @@ class FuzzyValueBaseDirective extends BaseDirective
         return new static($fields);
     }
 
-    public function setFuzziness(string|int $fuzziness)
+    public function setFuzziness(string|int $fuzziness): self
     {
         $this->fuzziness = $fuzziness;
+
+        return $this;
     }
 
     public function apply(Builder $builder, string $value): void
