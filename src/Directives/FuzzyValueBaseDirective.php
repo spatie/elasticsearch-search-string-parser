@@ -8,8 +8,10 @@ use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
 
 class FuzzyValueBaseDirective extends BaseDirective
 {
-    public function __construct(protected array $fields)
-    {
+    public function __construct(
+        protected array $fields,
+        protected int|string $fuzziness = 'auto'
+    ) {
     }
 
     public static function forField(string $field): static
@@ -22,13 +24,18 @@ class FuzzyValueBaseDirective extends BaseDirective
         return new static($fields);
     }
 
+    public function setFuzziness(string|int $fuzziness)
+    {
+        $this->fuzziness = $fuzziness;
+    }
+
     public function apply(Builder $builder, string $value): void
     {
         if (empty($value)) {
             return;
         }
 
-        $builder->addQuery(MultiMatchQuery::create($value, $this->fields, fuzziness: 'auto'));
+        $builder->addQuery(MultiMatchQuery::create($value, $this->fields, $this->fuzziness));
 
         if ($this->useSuggestions === false) {
             return;
@@ -41,7 +48,7 @@ class FuzzyValueBaseDirective extends BaseDirective
 
     public function transformToSuggestions(array $results): array
     {
-        if($this->useSuggestions === false){
+        if ($this->useSuggestions === false) {
             return [];
         }
 
