@@ -80,25 +80,32 @@ class SearchExecutor
     {
         $matchCount = preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER);
 
-        if (!$matchCount) {
+        if (! $matchCount) {
             return $query;
         }
 
-        collect($matches)
-            ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
-            ->each(function (array $match) use ($directive) {
-                if ($directive instanceof GroupDirective) {
-                    if ($this->groupDirective) {
-                        return;
-                    } else {
-                        $this->groupDirective = $directive;
-                    }
+        $matches = array_filter(
+            $matches,
+            fn(array $match) => $directive->canApply(array_shift($match), $match)
+        );
+
+        if (empty($matches)) {
+            return $query;
+        }
+
+        foreach ($matches as $match) {
+            if ($directive instanceof GroupDirective) {
+                if ($this->groupDirective) {
+                    continue;
+                } else {
+                    $this->groupDirective = $directive;
                 }
+            }
 
-                $directive->apply($this->builder, array_shift($match), $match);
+            $directive->apply($this->builder, array_shift($match), $match);
 
-                $this->appliedDirectives[] = $directive;
-            });
+            $this->appliedDirectives[] = $directive;
+        }
 
         return preg_filter($directive->pattern(), '', $query);
     }
