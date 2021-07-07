@@ -1,5 +1,3 @@
-**PACKAGE IN DEVELOPMENT, DO NOT USE YET**
-
 # Parse custom search strings and execute them using ElasticSearch
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
