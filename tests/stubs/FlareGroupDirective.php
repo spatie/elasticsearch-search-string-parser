@@ -11,9 +11,6 @@ use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchQueryBuilder\Sorts\Sort;
 use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
 use Spatie\ElasticsearchStringParser\SearchHit;
-use Spatie\ElasticsearchStringParser\Tests\stubs\Data\ErrorOccurrence;
-use Spatie\ElasticsearchStringParser\Tests\stubs\Data\ErrorOccurrenceGrouping;
-use Spatie\ElasticsearchStringParser\Tests\stubs\Data\ErrorOccurrenceHit;
 
 class FlareGroupDirective extends GroupDirective
 {
@@ -61,7 +58,7 @@ class FlareGroupDirective extends GroupDirective
     public function transformToHits(array $results): array
     {
         return array_map(
-            fn(array $bucket) => new SearchHit(
+            fn (array $bucket) => new SearchHit(
                 $bucket['recent_error_occurrence']['hits']['hits'][0]['_source'],
                 $bucket,
             ),
@@ -73,11 +70,10 @@ class FlareGroupDirective extends GroupDirective
     {
         $allowed = array_filter(
             $this->allowedValues,
-            fn(array $allowedValues, string $field) => in_array($value, $allowedValues),
+            fn (array $allowedValues, string $field) => in_array($value, $allowedValues),
             ARRAY_FILTER_USE_BOTH
         );
 
         return array_key_first($allowed);
     }
 }
-

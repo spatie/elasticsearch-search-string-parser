@@ -35,12 +35,12 @@ class SearchExecutor
         $hits = $this->groupDirective
             ? $this->groupDirective->transformToHits($results)
             : array_map(
-                fn(array $hit) => new SearchHit($hit['_source']),
+                fn (array $hit) => new SearchHit($hit['_source']),
                 $results['hits']['hits']
             );
 
         $suggestions = collect($this->appliedDirectives)
-            ->mapWithKeys(function (BaseDirective|PatternDirective $directive) use ($results) {
+            ->mapWithKeys(function (BaseDirective | PatternDirective $directive) use ($results) {
                 $name = $directive instanceof FuzzyKeyValuePatternDirective
                     ? $directive->getKey()
                     : $directive::class;
@@ -63,7 +63,7 @@ class SearchExecutor
     {
         $queryWithoutDirectives = array_reduce(
             $this->patternDirectives,
-            fn(string $query, PatternDirective $directive) => $this->applyDirective($directive, $query),
+            fn (string $query, PatternDirective $directive) => $this->applyDirective($directive, $query),
             $query
         );
 
@@ -86,7 +86,7 @@ class SearchExecutor
 
         $matches = array_filter(
             $matches,
-            fn(array $match) => $directive->canApply(array_shift($match), $match)
+            fn (array $match) => $directive->canApply(array_shift($match), $match)
         );
 
         if (empty($matches)) {

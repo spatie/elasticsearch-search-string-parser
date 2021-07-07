@@ -2,13 +2,9 @@
 
 namespace Spatie\ElasticsearchStringParser\Directives;
 
-use Cassandra\Date;
 use DateTimeImmutable;
 use Exception;
-use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Queries\MatchQuery;
-use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
 use Spatie\ElasticsearchQueryBuilder\Queries\RangeQuery;
 
 class DateRangeKeyValuePatternDirective extends PatternDirective
@@ -29,7 +25,7 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
 
     public function apply(Builder $builder, string $pattern, array $values = []): void
     {
-        if (!$this->validateDateTime($values['value'])) {
+        if (! $this->validateDateTime($values['value'])) {
             return;
         }
 
@@ -38,7 +34,7 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
 
         $rangeQuery = RangeQuery::create($this->field);
 
-        match($values['range'] ?? false) {
+        match ($values['range'] ?? false) {
             '>' => $rangeQuery->gt($dateTimeString),
             '>=' => $rangeQuery->gte($dateTimeString),
             '<' => $rangeQuery->lt($dateTimeString),

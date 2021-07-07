@@ -47,19 +47,19 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
 
     public function transformToSuggestions(array $results): array
     {
-        if($this->useSuggestions === false){
+        if ($this->useSuggestions === false) {
             return [];
         }
 
         $validAggregations = array_map(
-            fn(string $field) => "_{$field}_suggestions",
+            fn (string $field) => "_{$field}_suggestions",
             $this->fields
         );
 
         return collect($results['aggregations'] ?? [])
-            ->filter(fn(array $aggregation, string $name) => in_array($name, $validAggregations))
-            ->flatMap(fn(array $aggregation) => array_map(
-                fn(array $bucket) => $bucket['key'],
+            ->filter(fn (array $aggregation, string $name) => in_array($name, $validAggregations))
+            ->flatMap(fn (array $aggregation) => array_map(
+                fn (array $bucket) => $bucket['key'],
                 $aggregation['buckets']
             ))
             ->sort()

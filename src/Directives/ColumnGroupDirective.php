@@ -5,7 +5,6 @@ namespace Spatie\ElasticsearchStringParser\Directives;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TopHitsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Sorts\Sort;
 use Spatie\ElasticsearchStringParser\SearchHit;
 
 class ColumnGroupDirective extends GroupDirective
@@ -37,7 +36,7 @@ class ColumnGroupDirective extends GroupDirective
     public function transformToHits(array $results): array
     {
         return array_map(
-            fn(array $bucket) => new SearchHit(
+            fn (array $bucket) => new SearchHit(
                 $bucket['top_hit']['hits']['hits'][0]['_source'],
                 $bucket
             ),

@@ -65,7 +65,7 @@ class FlareContextGroupDirective extends GroupDirective
     public function transformToHits(array $results): array
     {
         return array_map(
-            fn(array $bucket) => new SearchHit(
+            fn (array $bucket) => new SearchHit(
                 $bucket['occurrence']['recent_error_occurrence']['hits']['hits'][0]['_source'],
                 $bucket['occurrence']
             ),
@@ -77,11 +77,10 @@ class FlareContextGroupDirective extends GroupDirective
     {
         $allowed = array_filter(
             $this->allowedValues,
-            fn(array $allowedValues, string $field) => in_array($value, $allowedValues),
+            fn (array $allowedValues, string $field) => in_array($value, $allowedValues),
             ARRAY_FILTER_USE_BOTH
         );
 
         return array_key_first($allowed);
     }
 }
-
