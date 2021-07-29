@@ -91,7 +91,7 @@ class SearchQueryTest extends TestCase
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
             )
             ->beforeApplying(function (PatternDirective $directive, string $match) {
-                    if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
+                if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
                     $directive->setFuzziness(100);
                 }
             })
