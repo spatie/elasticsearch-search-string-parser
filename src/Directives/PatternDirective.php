@@ -6,9 +6,7 @@ use Spatie\ElasticsearchQueryBuilder\Builder;
 
 abstract class PatternDirective
 {
-    protected bool $useSuggestions = true;
-
-    abstract public function apply(Builder $builder, string $pattern, array $values = []): void;
+    abstract public function apply(Builder $builder, string $pattern, array $values, int $patternOffsetStart, int $patternOffsetEnd): void;
 
     abstract public function pattern(): string;
 
@@ -26,13 +24,6 @@ abstract class PatternDirective
     public function transformToSuggestions(array $results): array
     {
         return [];
-    }
-
-    public function withoutSuggestions(): static
-    {
-        $this->useSuggestions = false;
-
-        return $this;
     }
 
     public function canApply(string $pattern, array $values = []): bool

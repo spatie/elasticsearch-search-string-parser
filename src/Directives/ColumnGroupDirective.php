@@ -5,7 +5,6 @@ namespace Spatie\ElasticsearchStringParser\Directives;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TopHitsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
-use Spatie\ElasticsearchQueryBuilder\Sorts\Sort;
 use Spatie\ElasticsearchStringParser\SearchHit;
 
 class ColumnGroupDirective extends GroupDirective
@@ -19,7 +18,7 @@ class ColumnGroupDirective extends GroupDirective
         return in_array($values['value'], $this->groupableFields);
     }
 
-    public function apply(Builder $builder, string $pattern, array $values = []): void
+    public function apply(Builder $builder, string $pattern, array $values, int $patternOffsetStart, int $patternOffsetEnd): void
     {
         $field = $values[0];
 

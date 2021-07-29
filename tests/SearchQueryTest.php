@@ -5,9 +5,12 @@ namespace Spatie\ElasticsearchStringParser\Tests;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Queries\BoolQuery;
 use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchStringParser\Directives\BaseDirective;
 use Spatie\ElasticsearchStringParser\Directives\ColumnGroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticsearchStringParser\Directives\FuzzyValueBaseDirective;
+use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
+use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
 use Spatie\ElasticsearchStringParser\SearchHit;
 use Spatie\ElasticsearchStringParser\SearchQuery;
 use Spatie\ElasticsearchStringParser\Tests\Fakes\FakeElasticSearchClient;
@@ -77,6 +80,49 @@ class SearchQueryTest extends TestCase
     }
 
     /** @test */
+    public function it_can_modify_the_directive_instance_before_being_applied()
+    {
+        $expectedQuery = BoolQuery::create()
+            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+            ->add(MultiMatchQuery::create('hello-belgium', ['title'], fuzziness: 100));
+
+        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+
+        SearchQuery::forClient($client)
+            ->patternDirectives(
+                FuzzyKeyValuePatternDirective::forField('title', 'title'),
+            )
+            ->beforeApplying(function ($directive, $match) {
+                if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
+                    $directive->setFuzziness(100);
+                }
+            })
+            ->search('title:hello-world title:hello-belgium');
+    }
+
+    /** @test */
+    public function it_knows_at_what_offset_the_directive_was_matched()
+    {
+        $client = FakeElasticSearchClient::make();
+
+        $matches = [];
+
+        SearchQuery::forClient($client)
+            ->patternDirectives(
+                FuzzyKeyValuePatternDirective::forField('title', 'title'),
+            )
+            ->beforeApplying(function ($directive, $match, $_values, $startOffset, $endOffset) use (&$matches) {
+                $matches[$match] = [$startOffset, $endOffset];
+            })
+            ->search('title:hello-world title:hello-belgium');
+
+        $this->assertEquals([
+            'title:hello-world ' => [0, 18],
+            'title:hello-belgium' => [18, 37],
+        ], $matches);
+    }
+
+    /** @test */
     public function it_can_search_with_a_pattern_directive_with_fallback_to_the_base_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -100,8 +146,8 @@ class SearchQueryTest extends TestCase
         );
 
         SearchQuery::forClient($client)
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
+            ->baseDirective((new FuzzyValueBaseDirective(['title', 'content']))->withSuggestions())
+            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title')->withSuggestions())
             ->search('something');
     }
 
@@ -134,7 +180,7 @@ class SearchQueryTest extends TestCase
         );
 
         $results = SearchQuery::forClient($client)
-            ->patternDirectives(new FuzzyKeyValuePatternDirective('title', ['title']))
+            ->patternDirectives((new FuzzyKeyValuePatternDirective('title', ['title']))->withSuggestions())
             ->search('title:test');
 
         $this->assertArrayHasKey('title', $results->suggestions);

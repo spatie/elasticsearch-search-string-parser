@@ -2,11 +2,13 @@
 
 namespace Spatie\ElasticsearchStringParser;
 
+use Closure;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchStringParser\Directives\BaseDirective;
 use Spatie\ElasticsearchStringParser\Directives\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
+use Spatie\ElasticsearchStringParser\Support\Regex;
 
 class SearchExecutor
 {
@@ -18,6 +20,7 @@ class SearchExecutor
         protected Builder $builder,
         protected array $patternDirectives = [],
         protected ?BaseDirective $baseDirective = null,
+        protected ?Closure $beforeApplying = null,
     ) {
     }
 
@@ -72,13 +75,21 @@ class SearchExecutor
 
     protected function applyDirective(PatternDirective $directive, string $query): string
     {
-        $matchCount = preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER);
+        // | PREG_OFFSET_CAPTURE
+        $matchCount = Regex::mb_preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
         if (!$matchCount) {
             return $query;
         }
 
         collect($matches)
+            ->map(fn(array $match) => array_merge(
+                array_map(fn($matchGroup) => $matchGroup[0], $match),
+                [
+                    'pattern_offset_start' => $match[0][1],
+                    'pattern_offset_end' => $match[0][1] + mb_strlen($match[0][0]),
+                ]
+            ))
             ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
             ->each(function (array $match) use ($directive) {
                 if ($directive instanceof GroupDirective) {
@@ -89,9 +100,18 @@ class SearchExecutor
                     }
                 }
 
-                $directive->apply($this->builder, array_shift($match), $match);
+                $directiveForMatch = clone $directive;
+                $fullMatch = array_shift($match);
+                $offsetEnd = array_pop($match);
+                $offsetStart = array_pop($match);
 
-                $this->appliedDirectives[] = $directive;
+                if ($this->beforeApplying) {
+                    ($this->beforeApplying)($directiveForMatch, $fullMatch, $match, $offsetStart, $offsetEnd);
+                }
+
+                $directiveForMatch->apply($this->builder, $fullMatch, $match, $offsetStart, $offsetEnd);
+
+                $this->appliedDirectives[] = $directiveForMatch;
             });
 
         return preg_filter($directive->pattern(), '', $query);
