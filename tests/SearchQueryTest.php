@@ -8,6 +8,7 @@ use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
 use Spatie\ElasticsearchStringParser\Directives\ColumnGroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticsearchStringParser\Directives\FuzzyValueBaseDirective;
+use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
 use Spatie\ElasticsearchStringParser\SearchHit;
 use Spatie\ElasticsearchStringParser\SearchQuery;
 use Spatie\ElasticsearchStringParser\Tests\Fakes\FakeElasticSearchClient;
@@ -89,8 +90,8 @@ class SearchQueryTest extends TestCase
             ->patternDirectives(
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
             )
-            ->beforeApplying(function ($directive, $match) {
-                if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
+            ->beforeApplying(function (PatternDirective $directive, string $match) {
+                    if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
                     $directive->setFuzziness(100);
                 }
             })
@@ -109,7 +110,7 @@ class SearchQueryTest extends TestCase
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
                 FuzzyKeyValuePatternDirective::forField('content', 'content'),
             )
-            ->beforeApplying(function ($directive, $match, $_values, $startOffset, $endOffset) use (&$matches) {
+            ->beforeApplying(function (PatternDirective $directive, string $match, array $_values, int $startOffset, int $endOffset) use (&$matches) {
                 $matches[$match] = [$startOffset, $endOffset];
             })
             ->search('title:hello-world content:hello title:hello-belgium');
