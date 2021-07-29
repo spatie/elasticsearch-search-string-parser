@@ -62,7 +62,6 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
                 fn (array $bucket) => $bucket['key'],
                 $aggregation['buckets']
             ))
-            ->sort()
             ->toArray();
     }
 }

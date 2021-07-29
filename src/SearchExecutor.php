@@ -40,15 +40,9 @@ class SearchExecutor
             );
 
         $suggestions = collect($this->appliedDirectives)
-            ->mapWithKeys(function (BaseDirective | PatternDirective $directive) use ($results) {
-                $name = $directive instanceof FuzzyKeyValuePatternDirective
-                    ? $directive->getKey()
-                    : $directive::class;
-
-                $suggestions = $directive->transformToSuggestions($results);
-
-                return [$name => $suggestions];
-            })
+            ->mapWithKeys(fn(BaseDirective|PatternDirective $directive) => [
+                $directive->getKey() => $directive->transformToSuggestions($results),
+            ])
             ->toArray();
 
         return new SearchResults(

@@ -65,7 +65,6 @@ class FuzzyValueBaseDirective extends BaseDirective
                 fn (array $bucket) => $bucket['key'],
                 $aggregation['buckets']
             ))
-            ->sort()
             ->toArray();
     }
 }
