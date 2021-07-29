@@ -57,13 +57,16 @@ class SearchExecutor
 
     protected function applyQueryToBuilder(string $query): void
     {
-        $queryWithoutDirectives = array_reduce(
-            $this->patternDirectives,
-            fn (string $query, PatternDirective $directive) => $this->applyDirective($directive, $query),
-            $query
+        foreach($this->patternDirectives as $directive) {
+            $this->applyDirective($directive, $query);
+        }
+
+        $patterns = array_map(
+            fn (PatternDirective $directive) => $directive->pattern(),
+            $this->patternDirectives
         );
 
-        $queryWithoutDirectives = trim($queryWithoutDirectives);
+        $queryWithoutDirectives = trim(preg_replace($patterns, '', $query));
 
         if ($this->baseDirective && $this->baseDirective->canApply($queryWithoutDirectives)) {
             $this->baseDirective->apply($this->builder, $queryWithoutDirectives);
@@ -72,12 +75,12 @@ class SearchExecutor
         }
     }
 
-    protected function applyDirective(PatternDirective $directive, string $query): string
+    protected function applyDirective(PatternDirective $directive, string $query): void
     {
         $matchCount = Regex::mb_preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
         if (! $matchCount) {
-            return $query;
+            return;
         }
 
         collect($matches)
@@ -107,10 +110,8 @@ class SearchExecutor
                 }
 
                 $directiveForMatch->apply($this->builder, $fullMatch, $match, $offsetStart, $offsetEnd);
-              
+
                 $this->appliedDirectives[] = $directiveForMatch;
             });
-
-        return preg_filter($directive->pattern(), '', $query);
     }
 }

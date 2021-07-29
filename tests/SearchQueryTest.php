@@ -107,15 +107,17 @@ class SearchQueryTest extends TestCase
         SearchQuery::forClient($client)
             ->patternDirectives(
                 FuzzyKeyValuePatternDirective::forField('title', 'title'),
+                FuzzyKeyValuePatternDirective::forField('content', 'content'),
             )
             ->beforeApplying(function ($directive, $match, $_values, $startOffset, $endOffset) use (&$matches) {
                 $matches[$match] = [$startOffset, $endOffset];
             })
-            ->search('title:hello-world title:hello-belgium');
+            ->search('title:hello-world content:hello title:hello-belgium');
 
         $this->assertEquals([
             'title:hello-world ' => [0, 18],
-            'title:hello-belgium' => [18, 37],
+            'content:hello ' => [18, 32],
+            'title:hello-belgium' => [32, 51],
         ], $matches);
     }
 
