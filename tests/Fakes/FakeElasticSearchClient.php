@@ -96,19 +96,19 @@ class FakeElasticSearchClient extends Client
             Assert::assertEquals($this->queryAssertion->toArray(), $params['body']['query']);
         }
 
-        if(in_array('aggregation', $this->assertions)){
+        if (in_array('aggregation', $this->assertions)) {
             Assert::assertEquals($this->aggregationAssertion->toArray(), $params['body']['aggs']);
         }
 
-        if(in_array('size', $this->assertions)){
+        if (in_array('size', $this->assertions)) {
             Assert::assertEquals($this->sizeAssertion, $params['size'] ?? null);
         }
 
-        if(in_array('from', $this->assertions)){
+        if (in_array('from', $this->assertions)) {
             Assert::assertEquals($this->fromAssertion, $params['from'] ?? null);
         }
 
-        if(in_array('index', $this->assertions)){
+        if (in_array('index', $this->assertions)) {
             Assert::assertEquals($this->indexAssertion, $params['index'] ?? null);
         }
 

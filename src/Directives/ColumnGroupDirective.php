@@ -36,7 +36,7 @@ class ColumnGroupDirective extends GroupDirective
     public function transformToHits(array $results): array
     {
         return array_map(
-            fn(array $bucket) => new SearchHit(
+            fn (array $bucket) => new SearchHit(
                 $bucket['top_hit']['hits']['hits'][0]['_source'],
                 $bucket
             ),

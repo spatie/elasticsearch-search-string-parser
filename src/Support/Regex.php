@@ -15,7 +15,7 @@ class Regex
         $flags = PREG_PATTERN_ORDER,
         $offset = 0,
         $encoding = null
-    ): int|bool {
+    ): int | bool {
         if (is_null($encoding)) {
             $encoding = mb_internal_encoding();
         }

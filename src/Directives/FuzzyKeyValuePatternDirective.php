@@ -12,7 +12,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         protected string $key,
         protected array $fields,
         protected bool $useSuggestions = false,
-        protected int|string|null $fuzziness = 'auto'
+        protected int | string | null $fuzziness = 'auto'
     ) {
     }
 
@@ -56,14 +56,14 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         }
 
         $validAggregations = array_map(
-            fn(string $field) => "_{$field}_suggestions",
+            fn (string $field) => "_{$field}_suggestions",
             $this->fields
         );
 
         return collect($results['aggregations'] ?? [])
-            ->filter(fn(array $aggregation, string $name) => in_array($name, $validAggregations))
-            ->flatMap(fn(array $aggregation) => array_map(
-                fn(array $bucket) => $bucket['key'],
+            ->filter(fn (array $aggregation, string $name) => in_array($name, $validAggregations))
+            ->flatMap(fn (array $aggregation) => array_map(
+                fn (array $bucket) => $bucket['key'],
                 $aggregation['buckets']
             ))
             ->toArray();
@@ -76,7 +76,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         return $this;
     }
 
-    public function setFuzziness(string|int|null $fuzziness): self
+    public function setFuzziness(string | int | null $fuzziness): self
     {
         $this->fuzziness = $fuzziness;
 

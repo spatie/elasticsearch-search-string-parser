@@ -5,7 +5,6 @@ namespace Spatie\ElasticsearchStringParser;
 use Closure;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchStringParser\Directives\BaseDirective;
-use Spatie\ElasticsearchStringParser\Directives\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
 use Spatie\ElasticsearchStringParser\Support\Regex;
@@ -38,12 +37,12 @@ class SearchExecutor
         $hits = $this->groupDirective
             ? $this->groupDirective->transformToHits($results)
             : array_map(
-                fn(array $hit) => new SearchHit($hit['_source']),
+                fn (array $hit) => new SearchHit($hit['_source']),
                 $results['hits']['hits']
             );
 
         $suggestions = collect($this->appliedDirectives)
-            ->mapWithKeys(fn(BaseDirective|PatternDirective $directive) => [
+            ->mapWithKeys(fn (BaseDirective | PatternDirective $directive) => [
                 $directive->getKey() => $directive->transformToSuggestions($results),
             ])
             ->toArray();
@@ -60,7 +59,7 @@ class SearchExecutor
     {
         $queryWithoutDirectives = array_reduce(
             $this->patternDirectives,
-            fn(string $query, PatternDirective $directive) => $this->applyDirective($directive, $query),
+            fn (string $query, PatternDirective $directive) => $this->applyDirective($directive, $query),
             $query
         );
 
@@ -75,22 +74,21 @@ class SearchExecutor
 
     protected function applyDirective(PatternDirective $directive, string $query): string
     {
-        // | PREG_OFFSET_CAPTURE
         $matchCount = Regex::mb_preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
-        if (!$matchCount) {
+        if (! $matchCount) {
             return $query;
         }
 
         collect($matches)
-            ->map(fn(array $match) => array_merge(
-                array_map(fn($matchGroup) => $matchGroup[0], $match),
+            ->map(fn (array $match) => array_merge(
+                array_map(fn ($matchGroup) => $matchGroup[0], $match),
                 [
                     'pattern_offset_start' => $match[0][1],
                     'pattern_offset_end' => $match[0][1] + mb_strlen($match[0][0]),
                 ]
             ))
-            ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
+            ->filter(fn (array $match) => $directive->canApply(array_shift($match), $match))
             ->each(function (array $match) use ($directive) {
                 if ($directive instanceof GroupDirective) {
                     if ($this->groupDirective) {
@@ -99,7 +97,6 @@ class SearchExecutor
                         $this->groupDirective = $directive;
                     }
                 }
-
                 $directiveForMatch = clone $directive;
                 $fullMatch = array_shift($match);
                 $offsetEnd = array_pop($match);
@@ -110,7 +107,7 @@ class SearchExecutor
                 }
 
                 $directiveForMatch->apply($this->builder, $fullMatch, $match, $offsetStart, $offsetEnd);
-
+              
                 $this->appliedDirectives[] = $directiveForMatch;
             });
 

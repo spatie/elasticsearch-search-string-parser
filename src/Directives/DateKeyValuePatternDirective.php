@@ -44,6 +44,7 @@ class DateKeyValuePatternDirective extends PatternDirective
     {
         return "/{$this->key}:(?<value>\d{4}\-\d{2}-\d{2}|today)(?:$|\s)/i";
     }
+
     protected function parseDate(string $date, string $format = 'Y-m-d'): ?DateTimeImmutable
     {
         if ($date === 'today') {
@@ -52,7 +53,7 @@ class DateKeyValuePatternDirective extends PatternDirective
 
         $dateTime = DateTimeImmutable::createFromFormat($format, $date);
 
-        if(! $dateTime || $dateTime->format($format) !== $date) {
+        if (! $dateTime || $dateTime->format($format) !== $date) {
             return null;
         }
 
