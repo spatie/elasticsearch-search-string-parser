@@ -57,7 +57,7 @@ class SearchExecutor
 
     protected function applyQueryToBuilder(string $query): void
     {
-        foreach($this->patternDirectives as $directive) {
+        foreach ($this->patternDirectives as $directive) {
             $this->applyDirective($directive, $query);
         }
 
