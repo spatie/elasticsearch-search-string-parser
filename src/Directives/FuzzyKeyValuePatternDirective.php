@@ -8,8 +8,12 @@ use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
 
 class FuzzyKeyValuePatternDirective extends PatternDirective
 {
-    public function __construct(protected string $key, protected array $fields)
-    {
+    public function __construct(
+        protected string $key,
+        protected array $fields,
+        protected bool $useSuggestions = false,
+        protected int|string|null $fuzziness = 'auto'
+    ) {
     }
 
     public static function forField(string $key, string $field): static
@@ -27,9 +31,9 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         return $this->key;
     }
 
-    public function apply(Builder $builder, string $pattern, array $values = []): void
+    public function apply(Builder $builder, string $pattern, array $values, int $patternOffsetStart, int $patternOffsetEnd): void
     {
-        $builder->addQuery(MultiMatchQuery::create($values['value'], $this->fields, fuzziness: 'auto'));
+        $builder->addQuery(MultiMatchQuery::create($values['value'], $this->fields, $this->fuzziness));
 
         if ($this->useSuggestions === false) {
             return;
@@ -63,5 +67,19 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
                 $aggregation['buckets']
             ))
             ->toArray();
+    }
+
+    public function withSuggestions(): self
+    {
+        $this->useSuggestions = true;
+
+        return $this;
+    }
+
+    public function setFuzziness(string|int|null $fuzziness): self
+    {
+        $this->fuzziness = $fuzziness;
+
+        return $this;
     }
 }

@@ -18,7 +18,7 @@ class ColumnGroupDirective extends GroupDirective
         return in_array($values['value'], $this->groupableFields);
     }
 
-    public function apply(Builder $builder, string $pattern, array $values = []): void
+    public function apply(Builder $builder, string $pattern, array $values, int $patternOffsetStart, int $patternOffsetEnd): void
     {
         $field = $values[0];
 

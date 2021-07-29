@@ -2,6 +2,7 @@
 
 namespace Spatie\ElasticsearchStringParser;
 
+use Closure;
 use Elasticsearch\Client;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchStringParser\Concerns\ForwardsCalls;
@@ -22,6 +23,8 @@ class SearchQuery
     protected Builder $builder;
 
     protected ?GroupDirective $groupDirective = null;
+
+    protected ?Closure $beforeApplying = null;
 
     public function __construct(
         Builder $builder
@@ -58,12 +61,20 @@ class SearchQuery
         return $this;
     }
 
+    public function beforeApplying(Closure $closure): static
+    {
+        $this->beforeApplying = $closure;
+
+        return $this;
+    }
+
     public function search(string $query): SearchResults
     {
         $searchExecutor = new SearchExecutor(
             clone $this->builder,
             $this->patternDirectives,
             $this->baseDirective,
+            $this->beforeApplying,
         );
 
         return $searchExecutor($query);

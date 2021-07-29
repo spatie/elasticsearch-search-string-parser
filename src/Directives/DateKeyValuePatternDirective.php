@@ -22,7 +22,7 @@ class DateKeyValuePatternDirective extends PatternDirective
         return $this->key;
     }
 
-    public function apply(Builder $builder, string $pattern, array $values = []): void
+    public function apply(Builder $builder, string $pattern, array $values, int $patternOffsetStart, int $patternOffsetEnd): void
     {
         $value = $this->parseDate($values['value']);
 

@@ -2,10 +2,12 @@
 
 namespace Spatie\ElasticsearchStringParser;
 
+use Closure;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchStringParser\Directives\BaseDirective;
 use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
+use Spatie\ElasticsearchStringParser\Support\Regex;
 
 class SearchExecutor
 {
@@ -17,6 +19,7 @@ class SearchExecutor
         protected Builder $builder,
         protected array $patternDirectives = [],
         protected ?BaseDirective $baseDirective = null,
+        protected ?Closure $beforeApplying = null,
     ) {
     }
 
@@ -71,34 +74,42 @@ class SearchExecutor
 
     protected function applyDirective(PatternDirective $directive, string $query): string
     {
-        $matchCount = preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER);
+        $matchCount = Regex::mb_preg_match_all($directive->pattern(), $query, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
         if (! $matchCount) {
             return $query;
         }
 
-        $matches = array_filter(
-            $matches,
-            fn (array $match) => $directive->canApply(array_shift($match), $match)
-        );
-
-        if (empty($matches)) {
-            return $query;
-        }
-
-        foreach ($matches as $match) {
-            if ($directive instanceof GroupDirective) {
-                if ($this->groupDirective) {
-                    continue;
-                } else {
-                    $this->groupDirective = $directive;
+        collect($matches)
+            ->map(fn(array $match) => array_merge(
+                array_map(fn($matchGroup) => $matchGroup[0], $match),
+                [
+                    'pattern_offset_start' => $match[0][1],
+                    'pattern_offset_end' => $match[0][1] + mb_strlen($match[0][0]),
+                ]
+            ))
+            ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
+            ->each(function (array $match) use ($directive) {
+                if ($directive instanceof GroupDirective) {
+                    if ($this->groupDirective) {
+                        return;
+                    } else {
+                        $this->groupDirective = $directive;
+                    }
                 }
-            }
+                $directiveForMatch = clone $directive;
+                $fullMatch = array_shift($match);
+                $offsetEnd = array_pop($match);
+                $offsetStart = array_pop($match);
 
-            $directive->apply($this->builder, array_shift($match), $match);
+                if ($this->beforeApplying) {
+                    ($this->beforeApplying)($directiveForMatch, $fullMatch, $match, $offsetStart, $offsetEnd);
+                }
 
-            $this->appliedDirectives[] = $directive;
-        }
+                $directiveForMatch->apply($this->builder, $fullMatch, $match, $offsetStart, $offsetEnd);
+
+                $this->appliedDirectives[] = $directiveForMatch;
+            });
 
         return preg_filter($directive->pattern(), '', $query);
     }
