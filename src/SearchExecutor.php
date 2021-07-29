@@ -107,7 +107,7 @@ class SearchExecutor
                 }
 
                 $directiveForMatch->apply($this->builder, $fullMatch, $match, $offsetStart, $offsetEnd);
-
+              
                 $this->appliedDirectives[] = $directiveForMatch;
             });
 
