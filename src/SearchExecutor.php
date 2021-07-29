@@ -4,7 +4,6 @@ namespace Spatie\ElasticsearchStringParser;
 
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchStringParser\Directives\BaseDirective;
-use Spatie\ElasticsearchStringParser\Directives\FuzzyKeyValuePatternDirective;
 use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
 
@@ -40,7 +39,7 @@ class SearchExecutor
             );
 
         $suggestions = collect($this->appliedDirectives)
-            ->mapWithKeys(fn(BaseDirective|PatternDirective $directive) => [
+            ->mapWithKeys(fn (BaseDirective | PatternDirective $directive) => [
                 $directive->getKey() => $directive->transformToSuggestions($results),
             ])
             ->toArray();
