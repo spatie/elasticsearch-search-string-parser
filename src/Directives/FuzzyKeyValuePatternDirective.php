@@ -12,7 +12,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         protected string $key,
         protected array $fields,
         protected bool $useSuggestions = false,
-        protected int|string|null $fuzziness = 'auto'
+        protected int | string | null $fuzziness = 'auto'
     ) {
     }
 
@@ -76,7 +76,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         return $this;
     }
 
-    public function setFuzziness(string|int|null $fuzziness): self
+    public function setFuzziness(string | int | null $fuzziness): self
     {
         $this->fuzziness = $fuzziness;
 

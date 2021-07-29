@@ -81,14 +81,14 @@ class SearchExecutor
         }
 
         collect($matches)
-            ->map(fn(array $match) => array_merge(
-                array_map(fn($matchGroup) => $matchGroup[0], $match),
+            ->map(fn (array $match) => array_merge(
+                array_map(fn ($matchGroup) => $matchGroup[0], $match),
                 [
                     'pattern_offset_start' => $match[0][1],
                     'pattern_offset_end' => $match[0][1] + mb_strlen($match[0][0]),
                 ]
             ))
-            ->filter(fn(array $match) => $directive->canApply(array_shift($match), $match))
+            ->filter(fn (array $match) => $directive->canApply(array_shift($match), $match))
             ->each(function (array $match) use ($directive) {
                 if ($directive instanceof GroupDirective) {
                     if ($this->groupDirective) {

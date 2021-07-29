@@ -10,7 +10,7 @@ class FuzzyValueBaseDirective extends BaseDirective
 {
     public function __construct(
         protected array $fields,
-        protected int|string $fuzziness = 'auto',
+        protected int | string $fuzziness = 'auto',
         protected bool $useSuggestions = false
     ) {
     }
