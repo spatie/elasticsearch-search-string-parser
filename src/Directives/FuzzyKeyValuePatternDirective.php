@@ -11,7 +11,6 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
     public function __construct(
         protected string $key,
         protected array $fields,
-        protected bool $useSuggestions = false,
         protected int | string | null $fuzziness = 'auto'
     ) {
     }
@@ -67,13 +66,6 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
                 $aggregation['buckets']
             ))
             ->toArray();
-    }
-
-    public function withSuggestions(): self
-    {
-        $this->useSuggestions = true;
-
-        return $this;
     }
 
     public function setFuzziness(string | int | null $fuzziness): self

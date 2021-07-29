@@ -11,7 +11,6 @@ class FuzzyValueBaseDirective extends BaseDirective
     public function __construct(
         protected array $fields,
         protected int | string $fuzziness = 'auto',
-        protected bool $useSuggestions = false
     ) {
     }
 
@@ -67,12 +66,5 @@ class FuzzyValueBaseDirective extends BaseDirective
                 $aggregation['buckets']
             ))
             ->toArray();
-    }
-
-    public function withSuggestions(): self
-    {
-        $this->useSuggestions = true;
-
-        return $this;
     }
 }

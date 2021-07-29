@@ -6,6 +6,8 @@ use Spatie\ElasticsearchQueryBuilder\Builder;
 
 abstract class BaseDirective
 {
+    protected bool $useSuggestions = false;
+
     abstract public function apply(Builder $builder, string $value): void;
 
     public function getKey(): string
@@ -21,5 +23,12 @@ abstract class BaseDirective
     public function canApply(string $value): bool
     {
         return true;
+    }
+
+    public function withSuggestions(): self
+    {
+        $this->useSuggestions = true;
+
+        return $this;
     }
 }
