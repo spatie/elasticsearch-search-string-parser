@@ -42,8 +42,8 @@ class SearchExecutor
             );
 
         $suggestions = collect($this->appliedDirectives)
-            ->mapWithKeys(fn (BaseDirective | PatternDirective $directive) => [
-                $directive->getKey() => $directive->transformToSuggestions($results),
+            ->mapWithKeys(fn (BaseDirective | PatternDirective $directive, string $matchedPattern) => [
+                $matchedPattern => $directive->transformToSuggestions($results),
             ])
             ->toArray();
 
