@@ -71,7 +71,7 @@ class SearchExecutor
         if ($this->baseDirective && $this->baseDirective->canApply($queryWithoutDirectives)) {
             $this->baseDirective->apply($this->builder, $queryWithoutDirectives);
 
-            $this->appliedDirectives[] = $this->baseDirective;
+            $this->appliedDirectives[$queryWithoutDirectives] = $this->baseDirective;
         }
     }
 
@@ -111,7 +111,7 @@ class SearchExecutor
 
                 $directiveForMatch->apply($this->builder, $fullMatch, $match, $offsetStart, $offsetEnd);
 
-                $this->appliedDirectives[] = $directiveForMatch;
+                $this->appliedDirectives[$fullMatch] = $directiveForMatch;
             });
     }
 }

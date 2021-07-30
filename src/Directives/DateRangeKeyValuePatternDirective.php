@@ -18,11 +18,6 @@ class DateRangeKeyValuePatternDirective extends PatternDirective
         return new static($key, $field);
     }
 
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
     public function apply(Builder $builder, string $pattern, array $values, int $patternOffsetStart, int $patternOffsetEnd): void
     {
         if (! $this->validateDateTime($values['value'])) {
