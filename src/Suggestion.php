@@ -6,7 +6,6 @@ class Suggestion
 {
     public function __construct(public string $suggestion, public ?int $count = null)
     {
-
     }
 
     public static function fromBucket(array $bucket): self
