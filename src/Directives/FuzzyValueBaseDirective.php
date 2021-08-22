@@ -5,12 +5,13 @@ namespace Spatie\ElasticsearchStringParser\Directives;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchStringParser\Suggestion;
 
 class FuzzyValueBaseDirective extends BaseDirective
 {
     public function __construct(
         protected array $fields,
-        protected int | string $fuzziness = 'auto',
+        protected int|string $fuzziness = 'auto',
     ) {
     }
 
@@ -24,7 +25,7 @@ class FuzzyValueBaseDirective extends BaseDirective
         return new static($fields);
     }
 
-    public function setFuzziness(string | int $fuzziness): self
+    public function setFuzziness(string|int $fuzziness): self
     {
         $this->fuzziness = $fuzziness;
 
@@ -55,14 +56,14 @@ class FuzzyValueBaseDirective extends BaseDirective
         }
 
         $validAggregations = array_map(
-            fn (string $field) => "_{$field}_suggestions",
+            fn(string $field) => "_{$field}_suggestions",
             $this->fields
         );
 
         return collect($results['aggregations'] ?? [])
-            ->filter(fn (array $aggregation, string $name) => in_array($name, $validAggregations))
-            ->flatMap(fn (array $aggregation) => array_map(
-                fn (array $bucket) => $bucket['key'],
+            ->filter(fn(array $aggregation, string $name) => in_array($name, $validAggregations))
+            ->flatMap(fn(array $aggregation) => array_map(
+                fn(array $bucket) => Suggestion::fromBucket($bucket),
                 $aggregation['buckets']
             ))
             ->toArray();

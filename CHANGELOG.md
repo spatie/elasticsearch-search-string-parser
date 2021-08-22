@@ -2,6 +2,10 @@
 
 All notable changes to `elasticsearch-search-string-parser` will be documented in this file.
 
+## 1.2.0 - 2021-08-22
+
+- allow meta data in directive suggestions
+
 ## 1.1.0 - 2021-07-29
 
 - add support for `beforeApply`

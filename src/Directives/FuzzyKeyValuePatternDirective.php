@@ -5,6 +5,7 @@ namespace Spatie\ElasticsearchStringParser\Directives;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
+use Spatie\ElasticsearchStringParser\Suggestion;
 
 class FuzzyKeyValuePatternDirective extends PatternDirective
 {
@@ -57,7 +58,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
         return collect($results['aggregations'] ?? [])
             ->filter(fn (array $aggregation, string $name) => in_array($name, $validAggregations))
             ->flatMap(fn (array $aggregation) => array_map(
-                fn (array $bucket) => $bucket['key'],
+                fn (array $bucket) => Suggestion::fromBucket($bucket),
                 $aggregation['buckets']
             ))
             ->toArray();

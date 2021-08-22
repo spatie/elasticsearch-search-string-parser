@@ -12,6 +12,11 @@ abstract class PatternDirective
 
     abstract public function pattern(): string;
 
+    /**
+     * @param array $results
+     *
+     * @return \Spatie\ElasticsearchStringParser\Suggestion[]
+     */
     public function transformToSuggestions(array $results): array
     {
         return [];
