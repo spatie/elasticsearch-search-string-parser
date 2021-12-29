@@ -47,7 +47,7 @@ When creating a search string parser, you decide how each part of the search str
 
 Let's dive into the inner workings of the package by dissecting an example search string and its parser:
 
-```
+```php
 $searchString = 'cheap neurotoxin company:aperture deadly @glados';
 
 SearchQuery::forClient(ClientBuilder::create())
