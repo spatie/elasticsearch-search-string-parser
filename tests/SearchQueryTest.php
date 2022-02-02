@@ -11,6 +11,7 @@ use Spatie\ElasticsearchStringParser\Directives\FuzzyValueBaseDirective;
 use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
 use Spatie\ElasticsearchStringParser\SearchHit;
 use Spatie\ElasticsearchStringParser\SearchQuery;
+use Spatie\ElasticsearchStringParser\Suggestion;
 use Spatie\ElasticsearchStringParser\Tests\Fakes\FakeElasticSearchClient;
 use Spatie\ElasticsearchStringParser\Tests\Support\PayloadFactory;
 
@@ -183,11 +184,11 @@ class SearchQueryTest extends TestCase
             ->patternDirectives((new FuzzyKeyValuePatternDirective('title', ['title']))->withSuggestions())
             ->search('title:test');
 
-        $this->assertArrayHasKey('title', $results->suggestions);
+        $this->assertArrayHasKey('title:test', $results->suggestions);
         $this->assertEquals([
-            'Hello world',
-            'A message from Rick',
-        ], $results->suggestions['title']);
+            new Suggestion('Hello world'),
+            new Suggestion('A message from Rick'),
+        ], $results->suggestions['title:test']);
     }
 
     /** @test */
