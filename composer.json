@@ -18,11 +18,6 @@
             "role": "Developer"
         }
     ],
-    "repositories": [{
-        "type": "vcs",
-        "url": "https://github.com/spatie/elasticsearch-query-builder"
-    }
-    ],
     "require": {
         "php": "^8.0",
         "elasticsearch/elasticsearch": "^7.12",
@@ -51,7 +46,10 @@
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
