@@ -2,6 +2,8 @@
 
 namespace Spatie\ElasticsearchStringParser\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
+
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Queries\BoolQuery;
 use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
@@ -17,7 +19,7 @@ use Spatie\ElasticsearchStringParser\Tests\Support\PayloadFactory;
 
 class SearchQueryTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_can_search_elastic_with_a_base_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -30,7 +32,7 @@ class SearchQueryTest extends TestCase
             ->search('search query');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_search_with_a_pattern_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -44,7 +46,7 @@ class SearchQueryTest extends TestCase
             ->search('title:hello-world');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_search_with_multiple_pattern_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -62,7 +64,7 @@ class SearchQueryTest extends TestCase
             ->search('title:hello-world content:hello');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_search_with_multiple_of_the_same_pattern_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -78,7 +80,7 @@ class SearchQueryTest extends TestCase
             ->search('title:hello-world title:hello-belgium');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_modify_the_directive_instance_before_being_applied()
     {
         $expectedQuery = BoolQuery::create()
@@ -99,7 +101,7 @@ class SearchQueryTest extends TestCase
             ->search('title:hello-world title:hello-belgium');
     }
 
-    /** @test */
+    #[Test]
     public function it_knows_at_what_offset_the_directive_was_matched()
     {
         $client = FakeElasticSearchClient::make();
@@ -123,7 +125,7 @@ class SearchQueryTest extends TestCase
         ], $matches);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_search_with_a_pattern_directive_with_fallback_to_the_base_directive()
     {
         $expectedQuery = BoolQuery::create()
@@ -138,7 +140,7 @@ class SearchQueryTest extends TestCase
             ->search('another one title:hello-world');
     }
 
-    /** @test */
+    #[Test]
     public function it_will_add_aggregations_for_suggestions()
     {
         $client = FakeElasticSearchClient::make()->assertAggregation(
@@ -152,7 +154,7 @@ class SearchQueryTest extends TestCase
             ->search('something');
     }
 
-    /** @test */
+    #[Test]
     public function it_will_transform_hits()
     {
         $client = FakeElasticSearchClient::make()->withHits(
@@ -169,7 +171,7 @@ class SearchQueryTest extends TestCase
         ], $results->hits);
     }
 
-    /** @test */
+    #[Test]
     public function it_will_append_suggestions()
     {
         $client = FakeElasticSearchClient::make()->withAggregations(
@@ -191,7 +193,7 @@ class SearchQueryTest extends TestCase
         ], $results->suggestions['title:test']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_a_grouping_directive()
     {
         $client = FakeElasticSearchClient::make()
@@ -223,7 +225,7 @@ class SearchQueryTest extends TestCase
         $this->assertNotNull($results->hits[1]->groupingData);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_change_the_size()
     {
         $client = FakeElasticSearchClient::make()->assertSize(200);
@@ -234,7 +236,7 @@ class SearchQueryTest extends TestCase
             ->search('search query');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_change_the_from()
     {
         $client = FakeElasticSearchClient::make()->assertFrom(200);
@@ -245,7 +247,7 @@ class SearchQueryTest extends TestCase
             ->search('search query');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_change_the_index()
     {
         $client = FakeElasticSearchClient::make()->assertIndex('fake-index');
