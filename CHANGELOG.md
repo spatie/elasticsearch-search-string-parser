@@ -2,6 +2,18 @@
 
 All notable changes to `elasticsearch-search-string-parser` will be documented in this file.
 
+## 1.2.3 - 2025-06-27
+
+### What's Changed
+
+* Laravel 11 and 12 compatibility by @juandelperal in https://github.com/spatie/elasticsearch-search-string-parser/pull/7
+
+### New Contributors
+
+* @juandelperal made their first contribution in https://github.com/spatie/elasticsearch-search-string-parser/pull/7
+
+**Full Changelog**: https://github.com/spatie/elasticsearch-search-string-parser/compare/1.2.2...1.2.3
+
 ## 1.2.2 - 2023-02-20
 
 - Add support for Laravel 10
