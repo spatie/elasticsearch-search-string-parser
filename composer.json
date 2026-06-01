@@ -21,7 +21,7 @@
     "require": {
         "php": "^8.2",
         "elasticsearch/elasticsearch": "^7.12",
-        "illuminate/collections": "^11.0|^12.0",
+        "illuminate/collections": "^11.0|^12.0|^13.0",
         "spatie/elasticsearch-query-builder": "^1.0"
     },
     "require-dev": {
