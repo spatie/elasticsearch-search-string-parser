@@ -1,8 +1,8 @@
 # Parse custom search strings and execute them using ElasticSearch
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/elasticsearch-search-string-parser/run-tests?label=tests)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3Arun-tests+branch%3Amaster)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/spatie/elasticsearch-search-string-parser/Check%20&%20fix%20styling?label=code%20style)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/spatie/elasticsearch-search-string-parser/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/spatie/elasticsearch-search-string-parser/php-cs-fixer.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3A%22Check+%26+fix+styling%22+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
 
 This package allows you to convert a search string like `foo bar status:active @john.doe` to its corresponding ElasticSearch request. Any custom _directives_ like `status:active` and `@john.doe` can be added using regex and the [`spatie/elasticsearch-query-builder`](https://github.com/spatie/elasticsearch-query-builder). There's also basic support for grouping directives (e.g. `group_by:project`) and providing auto-completion suggestions for certain directives.
