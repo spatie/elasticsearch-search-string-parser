@@ -7,11 +7,10 @@ use Exception;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchQueryBuilder\Queries\RangeQuery;
 
+/** @phpstan-consistent-constructor */
 class DateRangeKeyValuePatternDirective extends PatternDirective
 {
-    public function __construct(protected string $key, protected string $field)
-    {
-    }
+    public function __construct(protected string $key, protected string $field) {}
 
     public static function forField(string $key, string $field): static
     {

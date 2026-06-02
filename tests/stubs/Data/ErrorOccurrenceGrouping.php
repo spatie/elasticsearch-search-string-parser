@@ -10,8 +10,7 @@ class ErrorOccurrenceGrouping
         public DateTime $firstSeenAt,
         public DateTime $lastSeenAt,
         public int $occurrences
-    ) {
-    }
+    ) {}
 
     public static function fromPayload(array $payload): self
     {

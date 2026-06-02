@@ -10,12 +10,16 @@ use Spatie\ElasticsearchStringParser\Directives\BaseDirective;
 use Spatie\ElasticsearchStringParser\Directives\GroupDirective;
 use Spatie\ElasticsearchStringParser\Directives\PatternDirective;
 
-/** @mixin \Spatie\ElasticsearchQueryBuilder\Builder */
+/**
+ * @mixin Builder
+ *
+ * @phpstan-consistent-constructor
+ */
 class SearchQuery
 {
     use ForwardsCalls;
 
-    /** @var \Spatie\ElasticsearchStringParser\Directives\PatternDirective[] */
+    /** @var PatternDirective[] */
     protected array $patternDirectives = [];
 
     protected ?BaseDirective $baseDirective = null;
@@ -43,7 +47,6 @@ class SearchQuery
      * after all other directive have been applied and removed from the
      * search string.
      *
-     * @param \Spatie\ElasticsearchStringParser\Directives\BaseDirective $filter
      *
      * @return $this
      */

@@ -9,9 +9,7 @@ use Spatie\ElasticsearchStringParser\SearchHit;
 
 class ColumnGroupDirective extends GroupDirective
 {
-    public function __construct(protected array $groupableFields)
-    {
-    }
+    public function __construct(protected array $groupableFields) {}
 
     public function canApply(string $pattern, array $values = []): bool
     {

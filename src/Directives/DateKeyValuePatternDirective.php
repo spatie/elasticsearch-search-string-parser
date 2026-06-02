@@ -6,11 +6,10 @@ use DateTimeImmutable;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchQueryBuilder\Queries\RangeQuery;
 
+/** @phpstan-consistent-constructor */
 class DateKeyValuePatternDirective extends PatternDirective
 {
-    public function __construct(protected string $key, protected string $field)
-    {
-    }
+    public function __construct(protected string $key, protected string $field) {}
 
     public static function forField(string $key, string $field): static
     {
@@ -43,7 +42,7 @@ class DateKeyValuePatternDirective extends PatternDirective
     protected function parseDate(string $date, string $format = 'Y-m-d'): ?DateTimeImmutable
     {
         if ($date === 'today') {
-            return new DateTimeImmutable();
+            return new DateTimeImmutable;
         }
 
         $dateTime = DateTimeImmutable::createFromFormat($format, $date);

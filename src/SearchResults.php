@@ -9,6 +9,5 @@ class SearchResults
         public array $suggestions,
         public bool $isGrouped,
         public array $raw,
-    ) {
-    }
+    ) {}
 }

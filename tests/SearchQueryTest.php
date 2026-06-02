@@ -1,9 +1,5 @@
 <?php
 
-namespace Spatie\ElasticsearchStringParser\Tests;
-
-use PHPUnit\Framework\Attributes\Test;
-
 use Spatie\ElasticsearchQueryBuilder\Aggregations\TermsAggregation;
 use Spatie\ElasticsearchQueryBuilder\Queries\BoolQuery;
 use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
@@ -17,244 +13,208 @@ use Spatie\ElasticsearchStringParser\Suggestion;
 use Spatie\ElasticsearchStringParser\Tests\Fakes\FakeElasticSearchClient;
 use Spatie\ElasticsearchStringParser\Tests\Support\PayloadFactory;
 
-class SearchQueryTest extends TestCase
-{
-    #[Test]
-    public function it_can_search_elastic_with_a_base_directive()
-    {
-        $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('search query', ['title', 'content'], fuzziness: 'auto'));
+it('can search elastic with a base directive', function () {
+    $expectedQuery = BoolQuery::create()
+        ->add(MultiMatchQuery::create('search query', ['title', 'content'], fuzziness: 'auto'));
 
-        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+    $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::forClient($client->client())
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->search('search query');
-    }
+    SearchQuery::forClient($client->client())
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->search('search query');
+});
 
-    #[Test]
-    public function it_can_search_with_a_pattern_directive()
-    {
-        $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'));
+it('can search with a pattern directive', function () {
+    $expectedQuery = BoolQuery::create()
+        ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'));
 
-        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+    $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::forClient($client->client())
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
-            ->search('title:hello-world');
-    }
+    SearchQuery::forClient($client->client())
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
+        ->search('title:hello-world');
+});
 
-    #[Test]
-    public function it_can_search_with_multiple_pattern_directive()
-    {
-        $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
-            ->add(MultiMatchQuery::create('hello', ['content'], fuzziness: 'auto'));
+it('can search with multiple pattern directives', function () {
+    $expectedQuery = BoolQuery::create()
+        ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+        ->add(MultiMatchQuery::create('hello', ['content'], fuzziness: 'auto'));
 
-        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+    $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::forClient($client->client())
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->patternDirectives(
-                FuzzyKeyValuePatternDirective::forField('title', 'title'),
-                FuzzyKeyValuePatternDirective::forField('content', 'content'),
-            )
-            ->search('title:hello-world content:hello');
-    }
+    SearchQuery::forClient($client->client())
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->patternDirectives(
+            FuzzyKeyValuePatternDirective::forField('title', 'title'),
+            FuzzyKeyValuePatternDirective::forField('content', 'content'),
+        )
+        ->search('title:hello-world content:hello');
+});
 
-    #[Test]
-    public function it_can_search_with_multiple_of_the_same_pattern_directive()
-    {
-        $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
-            ->add(MultiMatchQuery::create('hello-belgium', ['title'], fuzziness: 'auto'));
+it('can search with multiple of the same pattern directive', function () {
+    $expectedQuery = BoolQuery::create()
+        ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+        ->add(MultiMatchQuery::create('hello-belgium', ['title'], fuzziness: 'auto'));
 
-        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+    $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::forClient($client->client())
-            ->patternDirectives(
-                FuzzyKeyValuePatternDirective::forField('title', 'title'),
-            )
-            ->search('title:hello-world title:hello-belgium');
-    }
+    SearchQuery::forClient($client->client())
+        ->patternDirectives(
+            FuzzyKeyValuePatternDirective::forField('title', 'title'),
+        )
+        ->search('title:hello-world title:hello-belgium');
+});
 
-    #[Test]
-    public function it_can_modify_the_directive_instance_before_being_applied()
-    {
-        $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
-            ->add(MultiMatchQuery::create('hello-belgium', ['title'], fuzziness: 100));
+it('can modify the directive instance before being applied', function () {
+    $expectedQuery = BoolQuery::create()
+        ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+        ->add(MultiMatchQuery::create('hello-belgium', ['title'], fuzziness: 100));
 
-        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+    $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::forClient($client->client())
-            ->patternDirectives(
-                FuzzyKeyValuePatternDirective::forField('title', 'title'),
-            )
-            ->beforeApplying(function (PatternDirective $directive, string $match) {
-                if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
-                    $directive->setFuzziness(100);
-                }
-            })
-            ->search('title:hello-world title:hello-belgium');
-    }
+    SearchQuery::forClient($client->client())
+        ->patternDirectives(
+            FuzzyKeyValuePatternDirective::forField('title', 'title'),
+        )
+        ->beforeApplying(function (PatternDirective $directive, string $match) {
+            if ($match === 'title:hello-belgium' && $directive instanceof FuzzyKeyValuePatternDirective) {
+                $directive->setFuzziness(100);
+            }
+        })
+        ->search('title:hello-world title:hello-belgium');
+});
 
-    #[Test]
-    public function it_knows_at_what_offset_the_directive_was_matched()
-    {
-        $client = FakeElasticSearchClient::make();
+it('knows at what offset the directive was matched', function () {
+    $client = FakeElasticSearchClient::make();
 
-        $matches = [];
+    $matches = [];
 
-        SearchQuery::forClient($client->client())
-            ->patternDirectives(
-                FuzzyKeyValuePatternDirective::forField('title', 'title'),
-                FuzzyKeyValuePatternDirective::forField('content', 'content'),
-            )
-            ->beforeApplying(function (PatternDirective $directive, string $match, array $_values, int $startOffset, int $endOffset) use (&$matches) {
-                $matches[$match] = [$startOffset, $endOffset];
-            })
-            ->search('title:hello-world content:hello title:hello-belgium');
+    SearchQuery::forClient($client->client())
+        ->patternDirectives(
+            FuzzyKeyValuePatternDirective::forField('title', 'title'),
+            FuzzyKeyValuePatternDirective::forField('content', 'content'),
+        )
+        ->beforeApplying(function (PatternDirective $directive, string $match, array $_values, int $startOffset, int $endOffset) use (&$matches) {
+            $matches[$match] = [$startOffset, $endOffset];
+        })
+        ->search('title:hello-world content:hello title:hello-belgium');
 
-        $this->assertEquals([
-            'title:hello-world ' => [0, 18],
-            'content:hello ' => [18, 32],
-            'title:hello-belgium' => [32, 51],
-        ], $matches);
-    }
+    expect($matches)->toEqual([
+        'title:hello-world ' => [0, 18],
+        'content:hello ' => [18, 32],
+        'title:hello-belgium' => [32, 51],
+    ]);
+});
 
-    #[Test]
-    public function it_can_search_with_a_pattern_directive_with_fallback_to_the_base_directive()
-    {
-        $expectedQuery = BoolQuery::create()
-            ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
-            ->add(MultiMatchQuery::create('another one', ['title', 'content'], fuzziness: 'auto'));
+it('can search with a pattern directive with fallback to the base directive', function () {
+    $expectedQuery = BoolQuery::create()
+        ->add(MultiMatchQuery::create('hello-world', ['title'], fuzziness: 'auto'))
+        ->add(MultiMatchQuery::create('another one', ['title', 'content'], fuzziness: 'auto'));
 
-        $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
+    $client = FakeElasticSearchClient::make()->assertQuery($expectedQuery);
 
-        SearchQuery::forClient($client->client())
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
-            ->search('another one title:hello-world');
-    }
+    SearchQuery::forClient($client->client())
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title'))
+        ->search('another one title:hello-world');
+});
 
-    #[Test]
-    public function it_will_add_aggregations_for_suggestions()
-    {
-        $client = FakeElasticSearchClient::make()->assertAggregation(
-            TermsAggregation::create('_title_suggestions', 'title.keyword'),
-            TermsAggregation::create('_content_suggestions', 'content.keyword'),
-        );
+it('will add aggregations for suggestions', function () {
+    $client = FakeElasticSearchClient::make()->assertAggregation(
+        TermsAggregation::create('_title_suggestions', 'title.keyword'),
+        TermsAggregation::create('_content_suggestions', 'content.keyword'),
+    );
 
-        SearchQuery::forClient($client->client())
-            ->baseDirective((new FuzzyValueBaseDirective(['title', 'content']))->withSuggestions())
-            ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title')->withSuggestions())
-            ->search('something');
-    }
+    SearchQuery::forClient($client->client())
+        ->baseDirective((new FuzzyValueBaseDirective(['title', 'content']))->withSuggestions())
+        ->patternDirectives(FuzzyKeyValuePatternDirective::forField('title', 'title')->withSuggestions())
+        ->search('something');
+});
 
-    #[Test]
-    public function it_will_transform_hits()
-    {
-        $client = FakeElasticSearchClient::make()->withHits(
-            PayloadFactory::hit('Hello world', 'This is a post'),
-            PayloadFactory::hit('A message from Rick', 'Never gonna give you up'),
-        );
+it('will transform hits', function () {
+    $client = FakeElasticSearchClient::make()->withHits(
+        PayloadFactory::hit('Hello world', 'This is a post'),
+        PayloadFactory::hit('A message from Rick', 'Never gonna give you up'),
+    );
 
-        $results = SearchQuery::forClient($client->client())->search('');
+    $results = SearchQuery::forClient($client->client())->search('');
 
-        $this->assertCount(2, $results->hits);
-        $this->assertEquals([
+    expect($results->hits)
+        ->toHaveCount(2)
+        ->toEqual([
             new SearchHit(['title' => 'Hello world', 'content' => 'This is a post']),
             new SearchHit(['title' => 'A message from Rick', 'content' => 'Never gonna give you up']),
-        ], $results->hits);
-    }
+        ]);
+});
 
-    #[Test]
-    public function it_will_append_suggestions()
-    {
-        $client = FakeElasticSearchClient::make()->withAggregations(
+it('will append suggestions', function () {
+    $client = FakeElasticSearchClient::make()->withAggregations(
+        PayloadFactory::bucketAggregation(
+            '_title_suggestions',
+            PayloadFactory::suggestionBucket('Hello world'),
+            PayloadFactory::suggestionBucket('A message from Rick')
+        )
+    );
+
+    $results = SearchQuery::forClient($client->client())
+        ->patternDirectives((new FuzzyKeyValuePatternDirective('title', ['title']))->withSuggestions())
+        ->search('title:test');
+
+    expect($results->suggestions)->toHaveKey('title:test');
+    expect($results->suggestions['title:test'])->toEqual([
+        new Suggestion('Hello world'),
+        new Suggestion('A message from Rick'),
+    ]);
+});
+
+it('can use a grouping directive', function () {
+    $client = FakeElasticSearchClient::make()
+        ->assertSize(0)
+        ->withAggregations(
             PayloadFactory::bucketAggregation(
-                '_title_suggestions',
-                PayloadFactory::suggestionBucket('Hello world'),
-                PayloadFactory::suggestionBucket('A message from Rick')
+                '_grouping',
+                PayloadFactory::groupingBucket(['title' => 'Hello world', 'content' => 'This is a post']),
+                PayloadFactory::groupingBucket(['title' => 'A message from Rick', 'content' => 'Never gonna give you up']),
             )
         );
 
-        $results = SearchQuery::forClient($client->client())
-            ->patternDirectives((new FuzzyKeyValuePatternDirective('title', ['title']))->withSuggestions())
-            ->search('title:test');
+    $results = SearchQuery::forClient($client->client())
+        ->patternDirectives(new ColumnGroupDirective(['title']))
+        ->search('group:title');
 
-        $this->assertArrayHasKey('title:test', $results->suggestions);
-        $this->assertEquals([
-            new Suggestion('Hello world'),
-            new Suggestion('A message from Rick'),
-        ], $results->suggestions['title:test']);
-    }
+    expect($results->hits)->toHaveCount(2);
 
-    #[Test]
-    public function it_can_use_a_grouping_directive()
-    {
-        $client = FakeElasticSearchClient::make()
-            ->assertSize(0)
-            ->withAggregations(
-                PayloadFactory::bucketAggregation(
-                    '_grouping',
-                    PayloadFactory::groupingBucket(['title' => 'Hello world', 'content' => 'This is a post']),
-                    PayloadFactory::groupingBucket(['title' => 'A message from Rick', 'content' => 'Never gonna give you up']),
-                )
-            );
+    expect($results->hits[0]->data)->toEqual(['title' => 'Hello world', 'content' => 'This is a post']);
+    expect($results->hits[0]->groupingData)->not->toBeNull();
 
-        $results = SearchQuery::forClient($client->client())
-            ->patternDirectives(new ColumnGroupDirective(['title']))
-            ->search('group:title');
+    expect($results->hits[1]->data)->toEqual(['title' => 'A message from Rick', 'content' => 'Never gonna give you up']);
+    expect($results->hits[1]->groupingData)->not->toBeNull();
+});
 
-        $this->assertCount(2, $results->hits);
+it('can change the size', function () {
+    $client = FakeElasticSearchClient::make()->assertSize(200);
 
-        $this->assertEquals(
-            ['title' => 'Hello world', 'content' => 'This is a post'],
-            $results->hits[0]->data
-        );
-        $this->assertNotNull($results->hits[0]->groupingData);
+    SearchQuery::forClient($client->client())
+        ->size(200)
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->search('search query');
+});
 
-        $this->assertEquals(
-            ['title' => 'A message from Rick', 'content' => 'Never gonna give you up'],
-            $results->hits[1]->data
-        );
-        $this->assertNotNull($results->hits[1]->groupingData);
-    }
+it('can change the from', function () {
+    $client = FakeElasticSearchClient::make()->assertFrom(200);
 
-    #[Test]
-    public function it_can_change_the_size()
-    {
-        $client = FakeElasticSearchClient::make()->assertSize(200);
+    SearchQuery::forClient($client->client())
+        ->from(200)
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->search('search query');
+});
 
-        SearchQuery::forClient($client->client())
-            ->size(200)
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->search('search query');
-    }
+it('can change the index', function () {
+    $client = FakeElasticSearchClient::make()->assertIndex('fake-index');
 
-    #[Test]
-    public function it_can_change_the_from()
-    {
-        $client = FakeElasticSearchClient::make()->assertFrom(200);
-
-        SearchQuery::forClient($client->client())
-            ->from(200)
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->search('search query');
-    }
-
-    #[Test]
-    public function it_can_change_the_index()
-    {
-        $client = FakeElasticSearchClient::make()->assertIndex('fake-index');
-
-        SearchQuery::forClient($client->client())
-            ->index('fake-index')
-            ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
-            ->search('search query');
-    }
-}
+    SearchQuery::forClient($client->client())
+        ->index('fake-index')
+        ->baseDirective(new FuzzyValueBaseDirective(['title', 'content']))
+        ->search('search query');
+});

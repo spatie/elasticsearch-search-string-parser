@@ -7,14 +7,14 @@ use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchQueryBuilder\Queries\MultiMatchQuery;
 use Spatie\ElasticsearchStringParser\Suggestion;
 
+/** @phpstan-consistent-constructor */
 class FuzzyKeyValuePatternDirective extends PatternDirective
 {
     public function __construct(
         protected string $key,
         protected array $fields,
-        protected int | string | null $fuzziness = 'auto'
-    ) {
-    }
+        protected int|string|null $fuzziness = 'auto'
+    ) {}
 
     public static function forField(string $key, string $field): static
     {
@@ -64,7 +64,7 @@ class FuzzyKeyValuePatternDirective extends PatternDirective
             ->toArray();
     }
 
-    public function setFuzziness(string | int | null $fuzziness): self
+    public function setFuzziness(string|int|null $fuzziness): self
     {
         $this->fuzziness = $fuzziness;
 
