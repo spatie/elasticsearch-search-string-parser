@@ -20,8 +20,7 @@ class SearchExecutor
         protected array $patternDirectives = [],
         protected ?BaseDirective $baseDirective = null,
         protected ?Closure $beforeApplying = null,
-    ) {
-    }
+    ) {}
 
     public function __invoke(string $query): SearchResults
     {
@@ -42,7 +41,7 @@ class SearchExecutor
             );
 
         $suggestions = collect($this->appliedDirectives)
-            ->mapWithKeys(fn (BaseDirective | PatternDirective $directive, string $matchedPattern) => [
+            ->mapWithKeys(fn (BaseDirective|PatternDirective $directive, string $matchedPattern) => [
                 $matchedPattern => $directive->transformToSuggestions($results),
             ])
             ->toArray();

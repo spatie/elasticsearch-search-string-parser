@@ -9,8 +9,7 @@ class ErrorOccurrenceHit
     public function __construct(
         public ErrorOccurrence $errorOccurrence,
         public ?ErrorOccurrenceGrouping $errorOccurrenceGrouping = null
-    ) {
-    }
+    ) {}
 
     public static function fromSearchHit(SearchHit $hit)
     {

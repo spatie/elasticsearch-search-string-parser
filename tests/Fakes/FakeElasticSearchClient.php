@@ -40,7 +40,7 @@ class FakeElasticSearchClient implements ClientInterface
 
     public static function make(): static
     {
-        return new self();
+        return new self;
     }
 
     public function client(): Client

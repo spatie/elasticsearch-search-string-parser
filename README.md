@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
 [![GitHub Tests Action Status](https://github.com/spatie/elasticsearch-search-string-parser/actions/workflows/run-tests.yml/badge.svg)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://github.com/spatie/elasticsearch-search-string-parser/actions/workflows/php-cs-fixer.yml/badge.svg)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3A%22Check+%26+fix+styling%22+branch%3Amain)
+[![GitHub Code Style Action Status](https://github.com/spatie/elasticsearch-search-string-parser/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/spatie/elasticsearch-search-string-parser/actions?query=workflow%3A%22Fix+PHP+code+style+issues%22+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/elasticsearch-search-string-parser.svg?style=flat-square)](https://packagist.org/packages/spatie/elasticsearch-search-string-parser)
 
 This package allows you to convert a search string like `foo bar status:active @john.doe` to its corresponding ElasticSearch request. Any custom _directives_ like `status:active` and `@john.doe` can be added using regex and the [`spatie/elasticsearch-query-builder`](https://github.com/spatie/elasticsearch-query-builder). There's also basic support for grouping directives (e.g. `group_by:project`) and providing auto-completion suggestions for certain directives.

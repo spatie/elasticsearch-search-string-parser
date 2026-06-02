@@ -3,6 +3,7 @@
 namespace Spatie\ElasticsearchStringParser\Directives;
 
 use Spatie\ElasticsearchQueryBuilder\Builder;
+use Spatie\ElasticsearchStringParser\Suggestion;
 
 abstract class PatternDirective
 {
@@ -13,9 +14,7 @@ abstract class PatternDirective
     abstract public function pattern(): string;
 
     /**
-     * @param array $results
-     *
-     * @return \Spatie\ElasticsearchStringParser\Suggestion[]
+     * @return Suggestion[]
      */
     public function transformToSuggestions(array $results): array
     {

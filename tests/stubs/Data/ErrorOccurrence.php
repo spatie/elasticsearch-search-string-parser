@@ -13,8 +13,7 @@ class ErrorOccurrence
         public string $applicationPath,
         public string $stage,
         public DateTime $receivedAt,
-    ) {
-    }
+    ) {}
 
     public static function fromPayload(array $payload): self
     {

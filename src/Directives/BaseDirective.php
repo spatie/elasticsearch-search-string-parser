@@ -3,6 +3,7 @@
 namespace Spatie\ElasticsearchStringParser\Directives;
 
 use Spatie\ElasticsearchQueryBuilder\Builder;
+use Spatie\ElasticsearchStringParser\Suggestion;
 
 abstract class BaseDirective
 {
@@ -11,9 +12,7 @@ abstract class BaseDirective
     abstract public function apply(Builder $builder, string $value): void;
 
     /**
-     * @param array $results
-     *
-     * @return \Spatie\ElasticsearchStringParser\Suggestion[]
+     * @return Suggestion[]
      */
     public function transformToSuggestions(array $results): array
     {

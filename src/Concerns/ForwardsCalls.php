@@ -11,7 +11,7 @@ trait ForwardsCalls
     {
         try {
             return $object->{$method}(...$parameters);
-        } catch (Error | BadMethodCallException $e) {
+        } catch (Error|BadMethodCallException $e) {
             $pattern = '~^Call to undefined method (?P<class>[^:]+)::(?P<method>[^\(]+)\(\)$~';
 
             if (! preg_match($pattern, $e->getMessage(), $matches)) {
@@ -27,7 +27,7 @@ trait ForwardsCalls
         }
     }
 
-    protected static function throwBadMethodCallException(string $method): void
+    protected static function throwBadMethodCallException(string $method): never
     {
         throw new BadMethodCallException(sprintf(
             'Call to undefined method %s::%s()',
