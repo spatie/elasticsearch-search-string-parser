@@ -2,6 +2,19 @@
 
 All notable changes to `elasticsearch-search-string-parser` will be documented in this file.
 
+## 2.0.0 - 2026-06-02
+
+### What's Changed
+
+* Add Elasticsearch 8 support by @juandelperal in https://github.com/spatie/elasticsearch-search-string-parser/pull/10
+* Modernize tooling: PHP 8.5, Pest 4, Pint, PHPStan level 5 by @freekmurze in https://github.com/spatie/elasticsearch-search-string-parser/pull/11
+
+### New Contributors
+
+* @freekmurze made their first contribution in https://github.com/spatie/elasticsearch-search-string-parser/pull/11
+
+**Full Changelog**: https://github.com/spatie/elasticsearch-search-string-parser/compare/1.3.0...2.0.0
+
 ## 1.3.0 - 2026-06-01
 
 ### What's Changed
