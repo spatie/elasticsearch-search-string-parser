@@ -8,7 +8,7 @@
 This package allows you to convert a search string like `foo bar status:active @john.doe` to its corresponding ElasticSearch request. Any custom _directives_ like `status:active` and `@john.doe` can be added using regex and the [`spatie/elasticsearch-query-builder`](https://github.com/spatie/elasticsearch-query-builder). There's also basic support for grouping directives (e.g. `group_by:project`) and providing auto-completion suggestions for certain directives.
 
 ```php
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientBuilder;
 use Spatie\ElasticsearchStringParser\SearchQuery;
 
 $subjects = SearchQuery::forClient(ClientBuilder::create())
@@ -40,6 +40,8 @@ You can install the package via composer:
 ```bash
 composer require spatie/elasticsearch-search-string-parser
 ```
+
+This package requires Elasticsearch 8 and the matching `elasticsearch/elasticsearch` 8.x PHP client. If you're still on Elasticsearch 7, use the `1.x` release of this package.
 
 ## How it works: directives
 

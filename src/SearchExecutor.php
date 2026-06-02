@@ -32,7 +32,7 @@ class SearchExecutor
             $this->builder->from(0);
         }
 
-        $results = $this->builder->search();
+        $results = $this->builder->search()->asArray();
 
         $hits = $this->groupDirective
             ? $this->groupDirective->transformToHits($results)
