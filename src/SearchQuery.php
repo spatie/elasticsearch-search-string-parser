@@ -3,7 +3,7 @@
 namespace Spatie\ElasticsearchStringParser;
 
 use Closure;
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\Client;
 use Spatie\ElasticsearchQueryBuilder\Builder;
 use Spatie\ElasticsearchStringParser\Concerns\ForwardsCalls;
 use Spatie\ElasticsearchStringParser\Directives\BaseDirective;

@@ -2,13 +2,25 @@
 
 namespace Spatie\ElasticsearchStringParser\Tests\Fakes;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Response\Elasticsearch;
+use Http\Discovery\Psr17FactoryDiscovery;
 use PHPUnit\Framework\Assert;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Spatie\ElasticsearchQueryBuilder\AggregationCollection;
 use Spatie\ElasticsearchQueryBuilder\Aggregations\Aggregation;
 use Spatie\ElasticsearchQueryBuilder\Queries\Query;
 
-class FakeElasticSearchClient extends Client
+/**
+ * The Elasticsearch 8 client is `final`, so it can no longer be extended.
+ * Instead we implement the PSR-18 HTTP client it is built on top of: we
+ * assert on the outgoing request and return a canned response. The transport
+ * wraps that response in an `Elasticsearch` object, just like the real client.
+ */
+class FakeElasticSearchClient implements ClientInterface
 {
     private ?Query $queryAssertion = null;
 
@@ -31,9 +43,11 @@ class FakeElasticSearchClient extends Client
         return new self();
     }
 
-    public function __construct()
+    public function client(): Client
     {
-        // We're fake
+        return ClientBuilder::create()
+            ->setHttpClient($this)
+            ->build();
     }
 
     public function assertQuery(Query $query): self
@@ -60,7 +74,7 @@ class FakeElasticSearchClient extends Client
         return $this;
     }
 
-    public function assertSize(?int $size)
+    public function assertSize(?int $size): self
     {
         $this->assertions[] = 'size';
         $this->sizeAssertion = $size;
@@ -68,7 +82,7 @@ class FakeElasticSearchClient extends Client
         return $this;
     }
 
-    public function assertFrom(?int $from)
+    public function assertFrom(?int $from): self
     {
         $this->assertions[] = 'from';
         $this->fromAssertion = $from;
@@ -90,29 +104,33 @@ class FakeElasticSearchClient extends Client
         return $this;
     }
 
-    public function search(array $params = [])
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
+        $body = json_decode((string) $request->getBody(), true) ?: [];
+
+        parse_str($request->getUri()->getQuery(), $queryParameters);
+
         if (in_array('query', $this->assertions)) {
-            Assert::assertEquals($this->queryAssertion->toArray(), $params['body']['query']);
+            Assert::assertEquals($this->queryAssertion->toArray(), $body['query'] ?? null);
         }
 
         if (in_array('aggregation', $this->assertions)) {
-            Assert::assertEquals($this->aggregationAssertion->toArray(), $params['body']['aggs']);
+            Assert::assertEquals($this->aggregationAssertion->toArray(), $body['aggs'] ?? null);
         }
 
         if (in_array('size', $this->assertions)) {
-            Assert::assertEquals($this->sizeAssertion, $params['size'] ?? null);
+            Assert::assertEquals($this->sizeAssertion, isset($queryParameters['size']) ? (int) $queryParameters['size'] : null);
         }
 
         if (in_array('from', $this->assertions)) {
-            Assert::assertEquals($this->fromAssertion, $params['from'] ?? null);
+            Assert::assertEquals($this->fromAssertion, isset($queryParameters['from']) ? (int) $queryParameters['from'] : null);
         }
 
         if (in_array('index', $this->assertions)) {
-            Assert::assertEquals($this->indexAssertion, $params['index'] ?? null);
+            Assert::assertEquals($this->indexAssertion, $this->indexFromPath($request->getUri()->getPath()));
         }
 
-        return [
+        return $this->toResponse([
             'took' => 42,
             'timed_out' => false,
             'hits' => [
@@ -124,6 +142,28 @@ class FakeElasticSearchClient extends Client
                 ],
             ],
             'aggregations' => $this->aggregations,
-        ];
+        ]);
+    }
+
+    private function indexFromPath(string $path): ?string
+    {
+        $path = trim($path, '/');
+
+        if ($path === '_search' || $path === '') {
+            return null;
+        }
+
+        return rawurldecode(explode('/', $path)[0]);
+    }
+
+    private function toResponse(array $payload): ResponseInterface
+    {
+        return Psr17FactoryDiscovery::findResponseFactory()
+            ->createResponse(200)
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader(Elasticsearch::HEADER_CHECK, Elasticsearch::PRODUCT_NAME)
+            ->withBody(
+                Psr17FactoryDiscovery::findStreamFactory()->createStream(json_encode($payload))
+            );
     }
 }
